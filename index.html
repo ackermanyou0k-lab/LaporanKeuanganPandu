@@ -30,17 +30,19 @@
                             500: '#617568',
                             600: '#4c5c51',
                             700: '#3e4b42',
-                            800: '#333e36',
-                            900: '#2b342e',
+                            800: '#2b342e',
+                            900: '#1a201c',
                         }
                     }
                 }
             }
         }
     </script>
-
     <style>
-        /* Custom Scrollbar for sleek desktop views */
+        body {
+            background-color: #f4f7f5;
+        }
+        /* Custom scrollbar style for sleek feel */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -55,1090 +57,900 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #aabaaf;
         }
-        @keyframes spin-slow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .animate-spin-slow {
-            animation: spin-slow 2s linear infinite;
-        }
     </style>
 </head>
-<body class="bg-sage-50 text-sage-900 font-sans min-h-screen antialiased selection:bg-sage-200">
+<body class="text-sage-800 antialiased font-sans min-h-screen pb-12">
 
-    <!-- APP MAIN WRAPPER -->
-    <div class="max-w-6xl mx-auto px-4 py-8 md:py-12">
-        
-        <!-- HEADER SECTION -->
-        <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10 border-b border-sage-200 pb-8">
-            <div>
-                <div class="flex items-center gap-2 mb-1.5">
-                    <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-xs uppercase font-semibold tracking-wider text-sage-500">Live Dashboard</span>
+    <!-- Premium Header -->
+    <header class="border-b border-sage-200 bg-white/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-sage-600 flex items-center justify-center text-white shadow-md shadow-sage-600/20">
+                    <i class="fa-solid fa-leaf text-lg"></i>
                 </div>
-                <h1 class="text-2xl md:text-3xl font-semibold tracking-tight text-sage-900">Sage Finance</h1>
-                <p class="text-sm text-sage-500 mt-1">Sistem pelacakan pengeluaran mandiri & alokasi budget perkuliahan.</p>
-            </div>
-            
-            <!-- Global Balance Card -->
-            <div class="bg-white border border-sage-200 rounded-2xl p-5 shadow-sm min-w-[240px] flex justify-between items-center transition-all hover:border-sage-300">
                 <div>
-                    <span class="text-xs text-sage-400 font-medium block">Total Pengeluaran Bulan Ini</span>
-                    <span class="text-2xl font-bold text-rose-600 mt-1 block tracking-tight" id="header-total-spent">Rp0</span>
-                </div>
-                <div class="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-500">
-                    <i class="fa-solid fa-arrow-trend-up"></i>
-                </div>
-            </div>
-        </header>
-
-        <!-- SINKRONISASI GOOGLE SPREADSHEET (INTEGRATION WIDGET) -->
-        <div class="bg-white border border-sage-200 rounded-2xl p-6 shadow-sm mb-8 transition-all hover:border-sage-300">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-sage-100">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 text-lg">
-                        <i class="fa-regular fa-file-excel"></i>
-                    </div>
-                    <div>
-                        <h2 class="font-semibold text-base text-sage-900 flex items-center gap-2">
-                            Koneksi Google Spreadsheet
-                        </h2>
-                        <span class="text-xs text-sage-500 block" id="sync-status">Status: Mode Offline (Lokal)</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="openInstructions()" class="text-xs font-semibold text-sage-500 hover:text-sage-800 transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-sage-50">
-                        <i class="fa-solid fa-circle-info"></i> Panduan Auto-Rapikan
-                    </button>
-                    <label class="relative inline-flex items-center cursor-pointer select-none">
-                        <input type="checkbox" id="auto-sync-toggle" class="sr-only peer" onchange="toggleAutoSync()">
-                        <div class="w-9 h-5 bg-sage-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-sage-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-emerald-600"></div>
-                        <span class="ms-2 text-xs font-semibold text-sage-600">Auto-Kirim</span>
-                    </label>
+                    <h1 class="text-lg font-bold tracking-tight text-sage-900">Sage Finance</h1>
+                    <p class="text-xs text-sage-500 font-medium">Sleek Minimalist Financial Tracker</p>
                 </div>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 items-end">
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-bold text-sage-400 uppercase tracking-wider mb-2">Google Web App URL (Deployment API)</label>
-                    <div class="relative flex items-center">
-                        <span class="absolute left-3 text-sage-400 text-xs"><i class="fa-solid fa-link"></i></span>
-                        <input type="password" id="google-url-input" placeholder="https://script.google.com/macros/s/.../exec" oninput="saveGoogleUrl()" class="w-full pl-9 pr-10 py-2.5 text-xs font-mono text-sage-800 bg-sage-50 border border-sage-100 rounded-xl outline-none focus:bg-white focus:border-sage-300 transition-all">
-                        <button onclick="toggleUrlVisibility()" class="absolute right-3 text-sage-400 hover:text-sage-600 text-xs">
-                            <i class="fa-regular fa-eye" id="toggle-eye-icon"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="flex gap-2">
-                    <button id="btn-push" onclick="pushToGoogleSheets()" class="flex-1 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50">
-                        <i class="fa-solid fa-upload"></i> Kirim Data
-                    </button>
-                    <button id="btn-pull" onclick="pullFromGoogleSheets()" class="flex-1 py-2.5 px-4 bg-white border border-sage-200 hover:bg-sage-100 text-sage-700 font-semibold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50">
-                        <i class="fa-solid fa-download"></i> Ambil Data
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- DASHBOARD GRID: Left statistics, Right active controls -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-            
-            <!-- PANEL 1: Budget and Allocation Configuration (Left) -->
-            <div class="lg:col-span-2 bg-white border border-sage-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="font-semibold text-lg text-sage-900 flex items-center gap-2">
-                            <i class="fa-solid fa-sliders text-sage-400 text-base"></i> Alokasi & Budget Akun
-                        </h2>
-                        <!-- Account Selector -->
-                        <select id="active-account-select" onchange="switchAccountBudget()" class="text-sm font-semibold text-sage-700 bg-sage-50 border border-sage-200 rounded-lg px-3 py-1.5 outline-none focus:border-sage-400 transition-colors cursor-pointer">
-                            <option value="Cash">💵 Cash</option>
-                            <option value="E-wallet">📱 E-wallet</option>
-                            <option value="BNI">🏦 Bank BNI</option>
-                        </select>
-                    </div>
-
-                    <!-- Budget Input & Interactive Progress bar -->
-                    <div class="space-y-6">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-sage-400 uppercase tracking-wider mb-2">Target Budget</label>
-                                <div class="relative flex items-center">
-                                    <span class="absolute left-3 text-sage-400 text-sm font-semibold">Rp</span>
-                                    <input type="number" id="budget-input" oninput="updateAccountBudget()" class="w-full pl-9 pr-4 py-2.5 text-base font-semibold text-sage-800 bg-sage-50 border border-sage-100 rounded-xl outline-none focus:bg-white focus:border-sage-300 transition-all">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-sage-400 uppercase tracking-wider mb-2">Terpakai Saat Ini</label>
-                                <input type="text" id="expense-display" disabled class="w-full px-4 py-2.5 text-base font-semibold text-sage-400 bg-sage-50 border border-sage-100 rounded-xl cursor-not-allowed">
-                            </div>
-                        </div>
-
-                        <!-- Progress Bar Component -->
-                        <div>
-                            <div class="flex justify-between text-xs font-semibold text-sage-500 mb-2">
-                                <span>Pemakaian Sisa Budget</span>
-                                <span id="progress-percentage-label">0% Terpakai</span>
-                            </div>
-                            <div class="w-full bg-sage-100 rounded-full h-3 overflow-hidden">
-                                <div id="budget-progress-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
-                            </div>
-                            <div class="flex justify-between text-xs mt-2">
-                                <span class="text-sage-400">Tersedia: <strong class="text-sage-700" id="remaining-display">Rp0</strong></span>
-                                <span class="text-sage-400" id="remaining-percentage-status">Aman</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PANEL 2: Grand Portfolio Stats (Right) -->
-            <div class="bg-white border border-sage-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-                <div>
-                    <h2 class="font-semibold text-lg text-sage-900 mb-5 flex items-center gap-2">
-                        <i class="fa-solid fa-chart-simple text-sage-400 text-base"></i> Status Portofolio
-                    </h2>
-                    
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center py-2 border-b border-sage-100">
-                            <span class="text-sm text-sage-500">Total Uang Dimiliki:</span>
-                            <span class="text-base font-semibold text-sage-800" id="grand-total-money">Rp0</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-sage-100">
-                            <span class="text-sm text-sage-500">% Terpakai:</span>
-                            <span class="text-sm font-semibold text-rose-500" id="percent-allocated">0%</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2">
-                            <span class="text-sm text-sage-500">% Tersisa:</span>
-                            <span class="text-sm font-semibold text-emerald-600" id="percent-unallocated">100%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Debts & Bills minimal accordion drawer button -->
-                <div class="mt-6 pt-4 border-t border-sage-100">
-                    <button onclick="toggleUtilityDrawer()" class="w-full py-2.5 px-4 bg-sage-50 border border-sage-200 hover:bg-sage-100 text-sage-700 font-semibold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-calculator"></i> Set Tagihan & Hutang <i class="fa-solid fa-chevron-down text-[10px]" id="drawer-chevron"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- UTILITY DRAWER -->
-        <div id="utility-drawer" class="hidden mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 animate-[fadeIn_0.2s_ease-out]">
-            <div class="bg-white border border-sage-200 rounded-2xl p-5 shadow-sm flex items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500">
-                        <i class="fa-solid fa-file-invoice-dollar"></i>
-                    </div>
-                    <div>
-                        <span class="text-xs text-sage-400 font-semibold block uppercase tracking-wider">Total Tagihan Bulanan</span>
-                        <span class="text-xs text-sage-500">Tagihan kost, wifi, listrik dll.</span>
-                    </div>
-                </div>
-                <div class="relative flex items-center max-w-[150px]">
-                    <span class="absolute left-2.5 text-sage-400 text-xs font-semibold">Rp</span>
-                    <input type="number" id="total-bills" value="0" oninput="saveGlobalStats()" class="w-full pl-7 pr-3 py-1.5 text-sm font-semibold text-sage-800 bg-sage-50 border border-sage-100 rounded-lg outline-none focus:bg-white focus:border-sage-300">
-                </div>
-            </div>
-            <div class="bg-white border border-sage-200 rounded-2xl p-5 shadow-sm flex items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-pink-50 flex items-center justify-center text-pink-500">
-                        <i class="fa-solid fa-hand-holding-dollar"></i>
-                    </div>
-                    <div>
-                        <span class="text-xs text-sage-400 font-semibold block uppercase tracking-wider">Total Hutang Aktif</span>
-                        <span class="text-xs text-sage-500">Hutang ke teman atau cicilan.</span>
-                    </div>
-                </div>
-                <div class="relative flex items-center max-w-[150px]">
-                    <span class="absolute left-2.5 text-sage-400 text-xs font-semibold">Rp</span>
-                    <input type="number" id="total-debts" value="0" oninput="saveGlobalStats()" class="w-full pl-7 pr-3 py-1.5 text-sm font-semibold text-sage-800 bg-sage-50 border border-sage-100 rounded-lg outline-none focus:bg-white focus:border-sage-300">
-                </div>
-            </div>
-        </div>
-
-        <!-- NEW TRANSACTION FORM (CLEAN INLINE) -->
-        <div class="bg-white border border-sage-200 rounded-2xl p-6 shadow-sm mb-8">
-            <h3 class="font-semibold text-sm uppercase tracking-wider text-sage-400 mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-plus text-xs"></i> Catat Transaksi Baru
-            </h3>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 items-end">
-                <!-- Date -->
-                <div class="lg:col-span-1">
-                    <label class="block text-[11px] font-bold text-sage-400 uppercase mb-1.5">Tanggal</label>
-                    <input type="date" id="new-date" class="w-full px-3 py-2 text-sm text-sage-700 bg-sage-50 border border-sage-200 rounded-lg outline-none focus:bg-white focus:border-sage-300 transition-all">
-                </div>
-                
-                <!-- Detail Description -->
-                <div class="sm:col-span-2 lg:col-span-2">
-                    <label class="block text-[11px] font-bold text-sage-400 uppercase mb-1.5">Deskripsi Transaksi</label>
-                    <input type="text" id="new-detail" placeholder="Misal: Nasi ayam geprek" class="w-full px-3 py-2 text-sm text-sage-700 bg-sage-50 border border-sage-200 rounded-lg outline-none focus:bg-white focus:border-sage-300 transition-all">
-                </div>
-
-                <!-- Nominal (Rp) -->
-                <div class="lg:col-span-1">
-                    <label class="block text-[11px] font-bold text-sage-400 uppercase mb-1.5">Nominal (Rp)</label>
-                    <input type="number" id="new-nominal" placeholder="Nominal" class="w-full px-3 py-2 text-sm text-sage-700 bg-sage-50 border border-sage-200 rounded-lg outline-none focus:bg-white focus:border-sage-300 transition-all">
-                </div>
-
-                <!-- Account tag selection -->
-                <div class="lg:col-span-1">
-                    <label class="block text-[11px] font-bold text-sage-400 uppercase mb-1.5">Metode / Akun</label>
-                    <select id="new-account" class="w-full px-3 py-2 text-sm text-sage-700 bg-sage-50 border border-sage-200 rounded-lg outline-none focus:bg-white focus:border-sage-300 transition-all cursor-pointer">
-                        <option value="Cash">Cash</option>
-                        <option value="E-wallet">E-wallet</option>
-                        <option value="BNI">BNI</option>
-                    </select>
-                </div>
-
-                <!-- Category tag selection -->
-                <div class="lg:col-span-1">
-                    <label class="block text-[11px] font-bold text-sage-400 uppercase mb-1.5">Kategori</label>
-                    <select id="new-category" class="w-full px-3 py-2 text-sm text-sage-700 bg-sage-50 border border-sage-200 rounded-lg outline-none focus:bg-white focus:border-sage-300 transition-all cursor-pointer">
-                        <option value="Living">Living</option>
-                        <option value="Playing">Playing</option>
-                        <option value="Giving">Giving</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Submit button centered on mobile, right-aligned on desktop -->
-            <div class="flex justify-end mt-4">
-                <button onclick="addTransaction()" class="w-full sm:w-auto px-5 py-2 bg-sage-800 hover:bg-sage-900 text-white font-semibold text-xs uppercase tracking-wider rounded-lg transition-all flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-paper-plane text-[10px]"></i> Tambah Transaksi
-                </button>
-            </div>
-        </div>
-
-        <!-- TRANSACTIONS SPREADSHEET TABLE -->
-        <div class="bg-white border border-sage-200 rounded-2xl shadow-sm overflow-hidden mb-8">
-            <div class="px-6 py-4 border-b border-sage-100 flex items-center justify-between bg-sage-50/50">
-                <h3 class="font-semibold text-sm text-sage-800 flex items-center gap-2">
-                    <i class="fa-solid fa-list-check text-sage-400"></i> Alur Kas Pengeluaran
-                </h3>
-                <span class="text-xs text-sage-400 font-semibold" id="table-row-count">0 Transaksi</span>
-            </div>
-            
-            <div class="overflow-x-auto">
-                <table class="w-full border-collapse text-left text-sm text-sage-700">
-                    <thead class="bg-sage-50/50 text-xs font-semibold uppercase text-sage-400 tracking-wider">
-                        <tr>
-                            <th scope="col" class="px-6 py-3.5 text-center w-[60px]">Status</th>
-                            <th scope="col" class="px-6 py-3.5 w-[140px]">Tanggal</th>
-                            <th scope="col" class="px-6 py-3.5">Deskripsi Detail</th>
-                            <th scope="col" class="px-6 py-3.5 text-right w-[160px]">Nominal</th>
-                            <th scope="col" class="px-6 py-3.5 w-[140px]">Metode</th>
-                            <th scope="col" class="px-6 py-3.5 w-[140px]">Kategori</th>
-                            <th scope="col" class="px-6 py-3.5 text-center w-[80px]">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-sage-100" id="table-body">
-                        <!-- Dynamic spreadsheet rows injected here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- GOOGLE SHEETS FORMULA GUIDE -->
-        <div class="bg-white border border-sage-200 rounded-2xl shadow-sm overflow-hidden">
-            <button onclick="toggleFormulaGuide()" class="w-full px-6 py-4 flex items-center justify-between hover:bg-sage-50 transition-colors text-left outline-none">
-                <span class="font-semibold text-sm text-sage-800 flex items-center gap-2">
-                    <i class="fa-regular fa-file-excel text-emerald-600"></i> Panduan Formula Google Sheets Resmi
+            <!-- Quick Actions & Status -->
+            <div class="flex items-center gap-2 flex-wrap justify-center">
+                <!-- Sync Badge Indicator -->
+                <span id="sync-status" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange-100 text-orange-700 border border-orange-200 flex items-center gap-1.5 transition-all duration-300">
+                    <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                    Lokal (Belum Sinkron)
                 </span>
-                <i class="fa-solid fa-chevron-down text-xs text-sage-400" id="guide-chevron"></i>
-            </button>
-            
-            <div id="formula-guide" class="hidden px-6 pb-6 border-t border-sage-100 animate-[fadeIn_0.2s_ease-out]">
-                <p class="text-xs text-sage-500 my-4 leading-relaxed">
-                    Sistem ini terinspirasi dari file <strong>spreedsheet.jpeg</strong>. Jika Anda ingin mereplikasi lembar kerja kalkulasi keuangan otomatis ini ke dalam Google Sheets asli milik Anda sendiri, letakkan data transaksi Anda mulai dari <strong>Baris ke-15</strong> dan gunakan rumus khusus berikut:
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
-                    <div class="p-4 bg-sage-50 rounded-xl border border-sage-100">
-                        <span class="text-[11px] font-bold text-sage-400 uppercase block mb-1">1. Total Pengeluaran (*Sel S3*)</span>
-                        <code class="text-xs text-rose-600 font-mono block select-all bg-white p-2 rounded border border-sage-200 mt-2">=SUM(D16:D100)</code>
-                    </div>
-                    <div class="p-4 bg-sage-50 rounded-xl border border-sage-100">
-                        <span class="text-[11px] font-bold text-sage-400 uppercase block mb-1">2. Expenses per Akun (Contoh: Cash - *Sel Q8*)</span>
-                        <code class="text-xs text-amber-700 font-mono block select-all bg-white p-2 rounded border border-sage-200 mt-2">=SUMIF(E16:E100; "Cash"; D16:D100)</code>
-                    </div>
-                    <div class="p-4 bg-sage-50 rounded-xl border border-sage-100">
-                        <span class="text-[11px] font-bold text-sage-400 uppercase block mb-1">3. Sisa Budget (*Sel Q9*)</span>
-                        <code class="text-xs text-emerald-700 font-mono block select-all bg-white p-2 rounded border border-sage-200 mt-2">=Q7 - Q8</code>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- MODAL: INSTRUCTIONS TO CONNECT & BEAUTIFY GOOGLE SHEETS -->
-    <div id="instructions-modal" class="fixed inset-0 bg-sage-950/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white border border-sage-200 rounded-3xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl animate-[fadeIn_0.2s_ease-out] overflow-hidden">
-            <div class="px-6 py-5 border-b border-sage-100 flex items-center justify-between bg-sage-50">
-                <div class="flex items-center gap-2">
-                    <i class="fa-regular fa-file-excel text-emerald-600 text-lg"></i>
-                    <h3 class="font-bold text-sage-900">Hubungkan & Auto-Rapikan Google Sheets Anda 🌿</h3>
-                </div>
-                <button onclick="closeInstructions()" class="text-sage-400 hover:text-sage-700 p-1 rounded-lg">
-                    <i class="fa-solid fa-xmark text-lg"></i>
+                
+                <!-- Main Sync Action Buttons -->
+                <button onclick="pullFromSheets()" class="text-xs font-semibold px-3 py-1.5 bg-white text-sage-700 hover:text-sage-900 border border-sage-200 hover:border-sage-300 rounded-lg shadow-sm transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-cloud-arrow-down text-sage-500"></i> Tarik Data
+                </button>
+                <button onclick="pushToSheets()" class="text-xs font-semibold px-3 py-1.5 bg-sage-600 hover:bg-sage-700 text-white rounded-lg shadow-sm hover:shadow-md transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Kirim Data
                 </button>
             </div>
+        </div>
+    </header>
+
+    <!-- App Container -->
+    <main class="max-w-6xl mx-auto px-4 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Column: Budgets, Daily Limit & Input Forms (Width 4/12) -->
+        <section class="lg:col-span-4 space-y-6">
             
-            <div class="p-6 overflow-y-auto space-y-6 text-sm text-sage-700 leading-relaxed">
-                <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl text-xs text-emerald-800">
-                    <p class="font-semibold mb-1">🌿 Pembaruan IT Consultant (Veteran Edition):</p>
-                    <p>Kode di bawah ini dilengkapi dengan fungsi <strong>beautifySpreadsheet()</strong>. Ini akan membuat tab khusus bernama <strong>Dashboard 🌿</strong> di Google Sheets Anda, lalu mendesainnya secara otomatis dengan skema warna Sage Green, formula instan, bar kemajuan, dan tabel yang super rapi!</p>
+            <!-- Account Budget Section -->
+            <div class="bg-white rounded-2xl p-5 border border-sage-200 shadow-sm">
+                <div class="flex items-center justify-between mb-4 pb-2 border-b border-sage-100">
+                    <h2 class="font-bold text-sm tracking-wide text-sage-900 uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-wallet text-sage-500"></i> Alokasi Anggaran
+                    </h2>
+                    <span class="text-xs text-sage-500 font-medium">Bulan Ini</span>
                 </div>
 
-                <div>
-                    <span class="font-bold text-emerald-700 block mb-1">Langkah 1: Salin Kode Google Apps Script Baru</span>
-                    <ol class="list-decimal pl-5 space-y-2 text-xs">
-                        <li>Buka spreadsheet Google Sheets Anda.</li>
-                        <li>Pilih menu <strong>Ekstensi</strong> &rarr; klik <strong>Apps Script</strong>.</li>
-                        <li>Hapus seluruh kode bawaan, lalu tempel kode di bawah ini.</li>
-                    </ol>
+                <!-- Account List Card -->
+                <div class="space-y-4">
+                    <!-- Cash Account Card -->
+                    <div class="p-3 bg-sage-50 rounded-xl border border-sage-100 relative group transition hover:border-sage-200">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-xs font-bold text-sage-700">Cash / Dompet</span>
+                            <button onclick="openBudgetModal('Cash')" class="opacity-0 group-hover:opacity-100 text-[10px] text-sage-500 hover:text-sage-700 transition">
+                                <i class="fa-solid fa-pen"></i> Atur
+                            </button>
+                        </div>
+                        <div class="text-base font-bold text-sage-900 mb-2" id="cash-budget-text">Rp 0</div>
+                        
+                        <!-- Progress & Remaining Indicator -->
+                        <div class="space-y-1">
+                            <div class="w-full bg-sage-200 h-1.5 rounded-full overflow-hidden">
+                                <div id="cash-progress" class="bg-sage-600 h-full w-0 transition-all duration-500"></div>
+                            </div>
+                            <div class="flex justify-between text-[10px] font-semibold text-sage-500">
+                                <span>Pakai: <span id="cash-spent-text">Rp 0</span></span>
+                                <span>Sisa: <span id="cash-sisa-text" class="text-emerald-600">Rp 0</span></span>
+                                <span id="cash-percent-text">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- E-wallet Account Card -->
+                    <div class="p-3 bg-sage-50 rounded-xl border border-sage-100 relative group transition hover:border-sage-200">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-xs font-bold text-sage-700">E-wallet (Gopay/OVO/Dana)</span>
+                            <button onclick="openBudgetModal('E-wallet')" class="opacity-0 group-hover:opacity-100 text-[10px] text-sage-500 hover:text-sage-700 transition">
+                                <i class="fa-solid fa-pen"></i> Atur
+                            </button>
+                        </div>
+                        <div class="text-base font-bold text-sage-900 mb-2" id="ewallet-budget-text">Rp 0</div>
+                        
+                        <!-- Progress & Remaining Indicator -->
+                        <div class="space-y-1">
+                            <div class="w-full bg-sage-200 h-1.5 rounded-full overflow-hidden">
+                                <div id="ewallet-progress" class="bg-sage-600 h-full w-0 transition-all duration-500"></div>
+                            </div>
+                            <div class="flex justify-between text-[10px] font-semibold text-sage-500">
+                                <span>Pakai: <span id="ewallet-spent-text">Rp 0</span></span>
+                                <span>Sisa: <span id="ewallet-sisa-text" class="text-emerald-600">Rp 0</span></span>
+                                <span id="ewallet-percent-text">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bank Account Card -->
+                    <div class="p-3 bg-sage-50 rounded-xl border border-sage-100 relative group transition hover:border-sage-200">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-xs font-bold text-sage-700">Rekening Bank</span>
+                            <button onclick="openBudgetModal('Bank')" class="opacity-0 group-hover:opacity-100 text-[10px] text-sage-500 hover:text-sage-700 transition">
+                                <i class="fa-solid fa-pen"></i> Atur
+                            </button>
+                        </div>
+                        <div class="text-base font-bold text-sage-900 mb-2" id="bank-budget-text">Rp 0</div>
+                        
+                        <!-- Progress & Remaining Indicator -->
+                        <div class="space-y-1">
+                            <div class="w-full bg-sage-200 h-1.5 rounded-full overflow-hidden">
+                                <div id="bank-progress" class="bg-sage-600 h-full w-0 transition-all duration-500"></div>
+                            </div>
+                            <div class="flex justify-between text-[10px] font-semibold text-sage-500">
+                                <span>Pakai: <span id="bank-spent-text">Rp 0</span></span>
+                                <span>Sisa: <span id="bank-sisa-text" class="text-emerald-600">Rp 0</span></span>
+                                <span id="bank-percent-text">0%</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Code Block Area with Click to Copy -->
-                <div class="relative bg-sage-900 rounded-xl p-4 font-mono text-xs text-sage-100 overflow-x-auto max-h-[220px]">
-                    <button onclick="copyAppsScript()" class="absolute top-2 right-2 bg-sage-800 hover:bg-sage-700 text-white font-sans text-[10px] px-2.5 py-1 rounded border border-sage-700 flex items-center gap-1.5 transition-all">
-                        <i class="fa-regular fa-copy"></i> <span id="copy-btn-text">Salin Kode</span>
-                    </button>
-<pre id="apps-script-code">
-// ==========================================
-// GOOGLE APPS SCRIPT - SAGE FINANCE PIPELINE
-// WITH AUTO-FORMAT & BEAUTIFY ENGINE
-// ==========================================
-
-function doPost(e) {
-  try {
-    var payload = JSON.parse(e.postData.contents);
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    
-    // 1. Simpan Target Budget
-    if (payload.budgets) {
-      var budgetSheet = getOrCreateSheet(ss, "Budgets");
-      budgetSheet.clear();
-      budgetSheet.appendRow(["Akun", "Target Budget"]);
-      for (var key in payload.budgets) {
-        budgetSheet.appendRow([key, payload.budgets[key]]);
-      }
-    }
-    
-    // 2. Simpan Transaksi Keuangan
-    if (payload.transactions) {
-      var txSheet = getOrCreateSheet(ss, "Transactions");
-      txSheet.clear();
-      txSheet.appendRow(["ID", "Status", "Tanggal", "Deskripsi", "Nominal", "Akun", "Kategori"]);
-      payload.transactions.forEach(function(t) {
-        txSheet.appendRow([
-          t.id, 
-          t.checked ? "Lunas" : "Belum", 
-          t.date, 
-          t.detail, 
-          t.nominal, 
-          t.account, 
-          t.category
-        ]);
-      });
-    }
-    
-    // Auto-Format setelah data berhasil masuk
-    beautifySpreadsheet();
-    
-    return ContentService.createTextOutput(JSON.stringify({ 
-      status: "success", 
-      message: "Sinkronisasi & Perapihan otomatis berhasil!" 
-    })).setMimeType(ContentService.MimeType.JSON);
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ 
-      status: "error", 
-      message: err.toString() 
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-function doGet(e) {
-  try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var budgets = {};
-    var transactions = [];
-    
-    var budgetSheet = ss.getSheetByName("Budgets");
-    if (budgetSheet) {
-      var budgetRows = budgetSheet.getDataRange().getValues();
-      for (var i = 1; i < budgetRows.length; i++) {
-        budgets[budgetRows[i][0]] = Number(budgetRows[i][1]) || 0;
-      }
-    }
-    
-    var txSheet = ss.getSheetByName("Transactions");
-    if (txSheet) {
-      var txRows = txSheet.getDataRange().getValues();
-      for (var j = 1; j < txRows.length; j++) {
-        transactions.push({
-          id: Number(txRows[j][0]) || Date.now(),
-          checked: txRows[j][1] === "Lunas",
-          date: txRows[j][2],
-          detail: txRows[j][3],
-          nominal: Number(txRows[j][4]) || 0,
-          account: txRows[j][5],
-          category: txRows[j][6]
-        });
-      }
-    }
-    
-    return ContentService.createTextOutput(JSON.stringify({
-      status: "success",
-      budgets: Object.keys(budgets).length > 0 ? budgets : null,
-      transactions: transactions.length > 0 ? transactions : null
-    })).setMimeType(ContentService.MimeType.JSON);
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ 
-      status: "error", 
-      message: err.toString() 
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-// FUNGSI AUTO-FORMAT PREMIUM SAGE GREEN
-function beautifySpreadsheet() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  
-  // Ambil atau buat lembar-lembar data
-  var txSheet = getOrCreateSheet(ss, "Transactions");
-  var budgetSheet = getOrCreateSheet(ss, "Budgets");
-  var dashSheet = getOrCreateSheet(ss, "Dashboard 🌿");
-  
-  // Pastikan susunan sheet rapi
-  ss.setActiveSheet(dashSheet);
-  ss.moveActiveSheet(1); // Taruh Dashboard di urutan pertama
-  
-  // === STYLE TAB TRANSAKSI ===
-  txSheet.getRange("A1:G1").setBackground("#4c5c51").setFontColor("#ffffff").setFontWeight("bold").setHorizontalAlignment("center");
-  txSheet.getRange("A:A").setHorizontalAlignment("center");
-  txSheet.getRange("B:C").setHorizontalAlignment("center");
-  txSheet.getRange("E:E").setNumberFormat("Rp#,##0");
-  txSheet.setColumnWidths(1, 7, 120);
-  txSheet.setFrozenRows(1);
-  txSheet.showGridlines();
-  
-  // === STYLE TAB BUDGETS ===
-  budgetSheet.getRange("A1:B1").setBackground("#4c5c51").setFontColor("#ffffff").setFontWeight("bold").setHorizontalAlignment("center");
-  budgetSheet.getRange("B:B").setNumberFormat("Rp#,##0");
-  budgetSheet.setColumnWidths(1, 2, 140);
-  budgetSheet.setFrozenRows(1);
-  budgetSheet.showGridlines();
-
-  // === RANCANG TAB DASHBOARD 🌿 (Cermin dari spreedsheet.jpeg) ===
-  dashSheet.clear();
-  dashSheet.showGridlines(false); // Sembunyikan garis bawaan untuk tampilan dashboard modern
-  
-  // Judul Besar Dashboard
-  dashSheet.getRange("B2:H2").merge()
-    .setValue("🌿 SAGE FINANCE - LIVE FINANCIAL DASHBOARD 🌿")
-    .setBackground("#e6ede8")
-    .setFontColor("#2b342e")
-    .setFontSize(13)
-    .setFontWeight("bold")
-    .setHorizontalAlignment("center")
-    .setVerticalAlignment("middle");
-  
-  dashSheet.setRowHeight(2, 35);
-  
-  // Banner Total Pengeluaran
-  dashSheet.getRange("B4:D4").merge().setValue("Total Pengeluaran Bulan Ini ->").setFontWeight("bold").setFontColor("#617568").setHorizontalAlignment("right");
-  dashSheet.getRange("E4:H4").merge().setFormula("=SUM(Transactions!E2:E)").setNumberFormat("Rp#,##0").setFontSize(14).setFontWeight("bold").setFontColor("#b91c1c").setHorizontalAlignment("left");
-  dashSheet.getRange("B4:H4").setBackground("#f4f7f5");
-  dashSheet.setRowHeight(4, 28);
-  
-  // Label Section 1: Alokasi Budget Akun (Kiri)
-  dashSheet.getRange("B6").setValue("AKUN").setFontWeight("bold").setBackground("#cfded4").setFontColor("#3e4b42").setHorizontalAlignment("center");
-  dashSheet.getRange("C6").setValue("Cash").setFontWeight("bold").setBackground("#cfded4").setFontColor("#3e4b42").setHorizontalAlignment("center");
-  
-  dashSheet.getRange("B7").setValue("Budget").setFontWeight("semibold");
-  dashSheet.getRange("C7").setFormula("=IFERROR(VLOOKUP(C6, Budgets!A2:B, 2, FALSE), 0)").setNumberFormat("Rp#,##0");
-  
-  dashSheet.getRange("B8").setValue("Expenses").setFontWeight("semibold");
-  dashSheet.getRange("C8").setFormula("=SUMIF(Transactions!F2:F, C6, Transactions!E2:E)").setNumberFormat("Rp#,##0");
-  
-  dashSheet.getRange("B9").setValue("Sisa Budget").setFontWeight("semibold");
-  dashSheet.getRange("C9").setFormula("=C7-C8").setNumberFormat("Rp#,##0").setFontColor("#047857").setFontWeight("bold");
-  
-  // Rapikan kotak Budget (B6:C9)
-  dashSheet.getRange("B6:C9").setBorder(true, true, true, true, true, true, "#aabaaf", SpreadsheetApp.BorderStyle.SOLID);
-  
-  // Label Section 2: Portfolio Ringkasan (Kanan)
-  dashSheet.getRange("E6:F6").merge().setValue("PORTOFOLIO STATUS").setFontWeight("bold").setBackground("#cfded4").setFontColor("#3e4b42").setHorizontalAlignment("center");
-  
-  dashSheet.getRange("E7").setValue("Total Semua Uang").setFontWeight("semibold");
-  dashSheet.getRange("F7").setFormula("=SUM(Budgets!B2:B)").setNumberFormat("Rp#,##0");
-  
-  dashSheet.getRange("E8").setValue("% Teralokasikan").setFontWeight("semibold");
-  dashSheet.getRange("F8").setFormula("=IF(F7>0, E4/F7, 0)").setNumberFormat("0.0%");
-  
-  dashSheet.getRange("E9").setValue("% Sisa").setFontWeight("semibold");
-  dashSheet.getRange("F9").setFormula("=1-F8").setNumberFormat("0.0%");
-  
-  // Rapikan kotak Portofolio (E6:F9)
-  dashSheet.getRange("E6:F9").setBorder(true, true, true, true, true, true, "#aabaaf", SpreadsheetApp.BorderStyle.SOLID);
-  
-  // Kolom Lebar Agar Rapi
-  dashSheet.setColumnWidth(1, 40);
-  dashSheet.setColumnWidth(2, 140);
-  dashSheet.setColumnWidth(3, 140);
-  dashSheet.setColumnWidth(4, 50);
-  dashSheet.setColumnWidth(5, 140);
-  dashSheet.setColumnWidth(6, 140);
-  dashSheet.setColumnWidth(7, 140);
-  dashSheet.setColumnWidth(8, 140);
-  
-  // Tambah petunjuk interaktif di Dashboard
-  dashSheet.getRange("B11:F11").merge()
-    .setValue("💡 Info: Gunakan sel C6 (tulis manual 'Cash', 'E-wallet', atau 'BNI') untuk melihat sisa budget per akun.")
-    .setFontStyle("italic").setFontColor("#839689").setFontSize(9);
-}
-
-function getOrCreateSheet(ss, name) {
-  var sheet = ss.getSheetByName(name);
-  if (!sheet) {
-    sheet = ss.insertSheet(name);
-  }
-  return sheet;
-}
-
-// MEMBUAT MENU DI GOOGLE SHEETS UNTUK MERAPIKAN MANUAL KAPAN SAJA
-function onOpen() {
-  var ui = SpreadsheetApp.getUi();
-  ui.createMenu('🌿 Sage Finance')
-      .addItem('Rapikan Spreadsheet (Auto-Format)', 'beautifySpreadsheet')
-      .addToUi();
-}
-</pre>
+                <!-- Summary Total Portofolio -->
+                <div class="mt-4 pt-4 border-t border-sage-100 flex justify-between items-center">
+                    <span class="text-xs font-bold text-sage-500">Total Portofolio Keuangan:</span>
+                    <span class="text-sm font-extrabold text-sage-900 animate-pulse" id="total-portfolio-text">Rp 0</span>
                 </div>
+            </div>
 
-                <div>
-                    <span class="font-bold text-emerald-700 block mb-1">Langkah 2: Publikasikan Ulang sebagai Aplikasi Web</span>
-                    <ol class="list-decimal pl-5 space-y-2 text-xs">
-                        <li>Klik ikon disket (**Simpan**).</li>
-                        <li>Klik **Terapkan** (*Deploy*) &rarr; pilih **Kelola Penerapan** atau **Penerapan Baru**.</li>
-                        <li>Pilih jenis penerapan: **Aplikasi Web** (*Web App*).</li>
-                        <li>Wajib disetel:
-                            <ul class="list-disc pl-5 mt-1 space-y-1 text-[11px] text-sage-600">
-                                <li>Jalankan sebagai: **Saya**</li>
-                                <li>Siapa yang memiliki akses: **Siapa saja** (*Anyone*)</li>
-                            </ul>
-                        </li>
-                        <li>Klik **Terapkan**, lalu pastikan Anda menyalin URL Deployment Web App baru yang berakhiran `/exec`.</li>
-                    </ol>
+            <!-- Batas Budget Harian Section -->
+            <div class="bg-white rounded-2xl p-5 border border-sage-200 shadow-sm">
+                <div class="flex items-center justify-between mb-4 pb-2 border-b border-sage-100">
+                    <h2 class="font-bold text-sm tracking-wide text-sage-900 uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-day text-sage-500"></i> Batas Budget Harian
+                    </h2>
+                    <span class="text-xs text-sage-500 font-medium">Kontrol Saku</span>
                 </div>
-
-                <div>
-                    <span class="font-bold text-emerald-700 block mb-1">Langkah 3: Jalankan "Rapikan" Langsung Dari Spreadsheet Anda</span>
-                    <p class="text-xs">
-                        Sekarang di dalam file Google Sheets Anda akan muncul menu baru di bar atas bernama <strong>🌿 Sage Finance</strong>. Klik menu tersebut lalu pilih <strong>Rapikan Spreadsheet (Auto-Format)</strong> untuk langsung mengaktifkan desain cantiknya secara instan!
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-sage-500 uppercase tracking-wider mb-1">Atur Batas Harian (Rp)</label>
+                        <div class="relative flex items-center">
+                            <span class="absolute left-2.5 text-xs font-bold text-sage-400">Rp</span>
+                            <input type="number" id="daily-budget-input" oninput="updateDailyBudget()" placeholder="Contoh: 50000" class="w-full text-xs pl-7 pr-2 py-1.5 bg-sage-50 rounded-lg border border-sage-200 focus:outline-none focus:ring-2 focus:ring-sage-500/20 focus:border-sage-500 transition text-sage-800 font-semibold font-mono">
+                        </div>
+                    </div>
+                    
+                    <div class="p-3 bg-sage-50 rounded-xl border border-sage-100 flex flex-col gap-1">
+                        <div class="flex justify-between items-center text-[10px] font-bold text-sage-500 uppercase">
+                            <span>Hari Ini (Non-Wajib)</span>
+                            <span id="daily-status-badge" class="text-sage-500 bg-sage-100 px-1.5 py-0.5 rounded font-bold">Belum Diatur ⚙️</span>
+                        </div>
+                        <div class="flex justify-between items-baseline mt-1">
+                            <span class="text-xs text-sage-600">Terpakai Hari Ini:</span>
+                            <span id="daily-spent-text" class="text-sm font-bold text-sage-900">Rp 0</span>
+                        </div>
+                        <!-- Daily limit progress bar -->
+                        <div class="w-full bg-sage-200 h-1.5 rounded-full overflow-hidden mt-1">
+                            <div id="daily-progress" class="bg-sage-600 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+                    <p class="text-[9px] text-sage-400 leading-normal italic">
+                        *Catatan: Pengeluaran rutin kategori <strong>Kuliah</strong> dan <strong>Kos/Bulanan</strong> otomatis dikecualikan agar tidak melanggar kalkulator harian Anda.
                     </p>
                 </div>
             </div>
-            
-            <div class="p-4 border-t border-sage-100 bg-sage-50/50 flex justify-end">
-                <button onclick="closeInstructions()" class="px-5 py-2 bg-sage-800 hover:bg-sage-900 text-white font-semibold text-xs uppercase tracking-wider rounded-xl transition-all">
-                    Selesai & Mengerti
-                </button>
+
+            <!-- Quick Record Form -->
+            <div class="bg-white rounded-2xl p-5 border border-sage-200 shadow-sm">
+                <h2 class="font-bold text-sm tracking-wide text-sage-900 uppercase flex items-center gap-2 mb-4 pb-2 border-b border-sage-100">
+                    <i class="fa-solid fa-circle-plus text-sage-500"></i> Catat Transaksi Baru
+                </h2>
+                
+                <form onsubmit="addTransaction(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-sage-500 uppercase tracking-wider mb-1">Nama Transaksi / Deskripsi</label>
+                        <input type="text" id="new-detail" placeholder="Contoh: Makan Siang Warmindo" required class="w-full text-xs px-3 py-2 bg-sage-50 rounded-lg border border-sage-200 focus:outline-none focus:ring-2 focus:ring-sage-500/20 focus:border-sage-500 transition text-sage-800">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-sage-500 uppercase tracking-wider mb-1">Nominal (Rp)</label>
+                            <input type="number" id="new-nominal" placeholder="Nominal" required class="w-full text-xs px-3 py-2 bg-sage-50 rounded-lg border border-sage-200 focus:outline-none focus:ring-2 focus:ring-sage-500/20 focus:border-sage-500 transition text-sage-800">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-sage-500 uppercase tracking-wider mb-1">Tanggal</label>
+                            <input type="date" id="new-date" required class="w-full text-xs px-3 py-2 bg-sage-50 rounded-lg border border-sage-200 focus:outline-none focus:ring-2 focus:ring-sage-500/20 focus:border-sage-500 transition text-sage-800">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-sage-500 uppercase tracking-wider mb-1">Akun Pembayaran</label>
+                            <select id="new-account" class="w-full text-xs px-2 py-2 bg-sage-50 rounded-lg border border-sage-200 focus:outline-none focus:ring-2 focus:ring-sage-500/20 focus:border-sage-500 transition text-sage-800">
+                                <option value="Cash">Cash</option>
+                                <option value="E-wallet">E-wallet</option>
+                                <option value="Bank">Bank</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-sage-500 uppercase tracking-wider mb-1">Kategori</label>
+                            <select id="new-category" class="w-full text-xs px-2 py-2 bg-sage-50 rounded-lg border border-sage-200 focus:outline-none focus:ring-2 focus:ring-sage-500/20 focus:border-sage-500 transition text-sage-800">
+                                <option value="Makanan">Makanan</option>
+                                <option value="Kos/Bulanan">Kos/Bulanan</option>
+                                <option value="Transportasi">Transportasi</option>
+                                <option value="Kuliah">Kuliah</option>
+                                <option value="Hiburan">Hiburan</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full mt-2 text-xs py-2.5 bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-lg shadow-sm hover:shadow transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-plus text-[10px]"></i> Tambahkan Transaksi
+                    </button>
+                </form>
             </div>
+
+            <!-- Google Sheets Connection Setup Card -->
+            <div class="bg-white rounded-2xl p-5 border border-sage-200 shadow-sm">
+                <button onclick="toggleCollapse('connection-panel')" class="w-full flex items-center justify-between font-bold text-sm tracking-wide text-sage-900 uppercase pb-2 border-b border-sage-100">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-plug text-sage-500"></i> Pengaturan Spreadsheet</span>
+                    <i id="connection-panel-icon" class="fa-solid fa-chevron-down text-sage-400 text-xs transition-transform duration-300"></i>
+                </button>
+                
+                <div id="connection-panel" class="hidden mt-4 space-y-3">
+                    <p class="text-xs text-sage-500 leading-relaxed">Masukkan alamat URL web-app dari deployment Google Apps Script Anda untuk mengaktifkan sinkronisasi awan.</p>
+                    
+                    <div>
+                        <label class="block text-[10px] font-bold text-sage-500 uppercase tracking-wider mb-1">Web App API URL</label>
+                        <input type="password" id="api-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full text-xs px-3 py-2 bg-sage-50 rounded-lg border border-sage-200 focus:outline-none focus:ring-2 focus:ring-sage-500/20 focus:border-sage-500 transition text-sage-800">
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="text-xs text-sage-600 font-semibold flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" id="auto-sync" onchange="toggleAutoSync(this)" class="rounded text-sage-600 focus:ring-sage-500">
+                            Sinkronisasi Otomatis
+                        </label>
+                        <span class="text-[10px] text-sage-400 font-medium italic">Simpan otomatis di cloud</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 pt-2">
+                        <button onclick="saveApiUrl()" class="text-xs font-semibold py-2 bg-sage-100 hover:bg-sage-200 text-sage-800 rounded-lg transition">Simpan URL</button>
+                        <button onclick="testConnection()" class="text-xs font-semibold py-2 bg-white text-sage-600 hover:text-sage-700 border border-sage-200 rounded-lg transition">Tes Koneksi</button>
+                    </div>
+
+                    <!-- Accordion Help instructions -->
+                    <div class="mt-4 pt-4 border-t border-sage-100">
+                        <button onclick="toggleCollapse('instruction-panel')" class="w-full text-left text-xs font-bold text-sage-600 hover:text-sage-800 flex justify-between items-center">
+                            <span>Bagaimana cara menghubungkannya?</span>
+                            <i id="instruction-panel-icon" class="fa-solid fa-chevron-down text-xs"></i>
+                        </button>
+                        <div id="instruction-panel" class="hidden mt-2 text-[11px] text-sage-500 leading-relaxed space-y-1.5">
+                            <ol class="list-decimal pl-4 space-y-1">
+                                <li>Buka lembar Google Sheets Anda.</li>
+                                <li>Klik <strong>Extensions (Ekstensi)</strong> > <strong>Apps Script</strong>.</li>
+                                <li>Tempelkan kode Apps Script yang Anda buat.</li>
+                                <li>Klik <strong>Deploy</strong> > <strong>New Deployment</strong>.</li>
+                                <li>Ubah jenis deploy ke <strong>Web App</strong>, ubah akses ke <strong>Anyone</strong>.</li>
+                                <li>Salin URL hasil deploy tersebut, tempelkan di atas lalu klik <strong>Simpan URL</strong>.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </section>
+
+        <!-- Right Column: Ledger Table & Filters (Width 8/12) -->
+        <section class="lg:col-span-8 bg-white rounded-2xl p-5 border border-sage-200 shadow-sm flex flex-col justify-between">
+            <div>
+                <!-- Daily Warning Alert Banner (Hidden by default) -->
+                <div id="daily-warning-banner" class="hidden mb-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3 animate-pulse">
+                    <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-triangle-exclamation text-sm"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-red-800">⚠️ PERINGATAN: Budget Harian Terlampaui!</h4>
+                        <p class="text-[11px] text-red-600 mt-0.5 leading-relaxed">
+                            Pengeluaran harian non-rutin Anda hari ini mencapai <strong id="warning-banner-spent">Rp 0</strong>, melebihi batas target budget harian Anda yaitu <strong id="warning-banner-limit">Rp 0</strong>. Segera rem pengeluaran Anda!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Title & Filter Header -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-sage-100 mb-4">
+                    <div>
+                        <h2 class="font-bold text-sm tracking-wide text-sage-900 uppercase flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-sage-500"></i> Buku Transaksi & Tagihan
+                        </h2>
+                        <p class="text-[11px] text-sage-500 font-medium">Atur dan pantau pengeluaran Anda secara berkala</p>
+                    </div>
+                    
+                    <!-- Integrated Filtering System -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <select id="filter-account" onchange="renderTable()" class="text-xs px-2.5 py-1.5 bg-sage-50 border border-sage-200 rounded-lg text-sage-700 focus:outline-none focus:border-sage-500">
+                            <option value="ALL">Semua Akun</option>
+                            <option value="Cash">Cash</option>
+                            <option value="E-wallet">E-wallet</option>
+                            <option value="Bank">Bank</option>
+                        </select>
+                        <select id="filter-category" onchange="renderTable()" class="text-xs px-2.5 py-1.5 bg-sage-50 border border-sage-200 rounded-lg text-sage-700 focus:outline-none focus:border-sage-500">
+                            <option value="ALL">Semua Kategori</option>
+                            <option value="Makanan">Makanan</option>
+                            <option value="Kos/Bulanan">Kos/Bulanan</option>
+                            <option value="Transportasi">Transportasi</option>
+                            <option value="Kuliah">Kuliah</option>
+                            <option value="Hiburan">Hiburan</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                        <select id="filter-status" onchange="renderTable()" class="text-xs px-2.5 py-1.5 bg-sage-50 border border-sage-200 rounded-lg text-sage-700 focus:outline-none focus:border-sage-500">
+                            <option value="ALL">Semua Status</option>
+                            <option value="Lunas">Lunas</option>
+                            <option value="Belum">Belum Lunas</option>
+                        </select>
+                        <button onclick="clearAllData()" class="text-xs font-semibold px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 rounded-lg transition flex items-center gap-1">
+                            <i class="fa-solid fa-trash-can text-[10px]"></i> Kosongkan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Ledger Table Panel -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-sage-100 text-[10px] font-bold text-sage-400 uppercase tracking-wider">
+                                <th class="py-3 px-2 text-center w-12">Lunas</th>
+                                <th class="py-3 px-2 w-28">Tanggal</th>
+                                <th class="py-3 px-2">Keterangan</th>
+                                <th class="py-3 px-2 w-24 text-center">Akun</th>
+                                <th class="py-3 px-2 w-28 text-center">Kategori</th>
+                                <th class="py-3 px-2 w-32 text-right">Nominal</th>
+                                <th class="py-3 px-2 text-center w-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="ledger-body" class="divide-y divide-sage-50 text-xs">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+
+                    <!-- Empty Data State Graphic -->
+                    <div id="empty-state" class="hidden py-16 text-center">
+                        <div class="w-16 h-16 bg-sage-50 text-sage-400 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fa-solid fa-folder-open text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold text-sm text-sage-700">Data Masih Kosong</h3>
+                        <p class="text-xs text-sage-400 max-w-xs mx-auto mt-1">Belum ada transaksi terdaftar. Silakan masukkan transaksi pertama Anda menggunakan formulir di sebelah kiri!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Pagination Summary Info -->
+            <div class="mt-6 pt-4 border-t border-sage-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="text-[11px] font-semibold text-sage-500">
+                    Menampilkan <span id="displayed-count">0</span> dari <span id="total-count">0</span> catatan pengeluaran
+                </div>
+                <div class="text-sm font-bold text-sage-900 flex items-center gap-2">
+                    <span>Total Pengeluaran Bulan Ini:</span>
+                    <span id="grand-total-spent" class="text-red-600">Rp 0</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Interactive Budget Adjuster Modal Backdrop -->
+    <div id="budget-modal" class="hidden fixed inset-0 bg-sage-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-sm border border-sage-200 shadow-xl transition-all scale-95 duration-200">
+            <h3 class="font-bold text-base text-sage-900 flex items-center gap-2 mb-2">
+                <i class="fa-solid fa-pen-to-square text-sage-500"></i> Alokasikan Budget Akun
+            </h3>
+            <p class="text-xs text-sage-500 mb-4">Ubah alokasi nominal anggaran bulanan Anda untuk akun <span id="modal-account-name" class="font-bold text-sage-800"></span>.</p>
+            
+            <form onsubmit="saveNewBudget(event)" class="space-y-4">
+                <input type="hidden" id="modal-account-id">
+                <div>
+                    <label class="block text-[10px] font-bold text-sage-500 uppercase tracking-wider mb-1">Target Nominal (Rupiah)</label>
+                    <input type="number" id="modal-budget-input" required class="w-full text-xs px-3 py-2 bg-sage-50 rounded-lg border border-sage-200 focus:outline-none focus:ring-2 focus:ring-sage-500/20 focus:border-sage-500 transition text-sage-800 font-semibold font-mono">
+                </div>
+                
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeBudgetModal()" class="text-xs font-semibold px-4 py-2 border border-sage-200 rounded-lg text-sage-600 hover:text-sage-800 transition">Batal</button>
+                    <button type="submit" class="text-xs font-semibold px-4 py-2 bg-sage-600 hover:bg-sage-700 text-white rounded-lg shadow transition">Terapkan</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- CUSTOM TOAST NOTIFICATION CONTAINER -->
-    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
+    <!-- Customized Elegant Toast Notification Portal -->
+    <div id="toast-portal" class="fixed bottom-5 right-5 space-y-2 z-50"></div>
 
     <!-- LOGIC SCRIPT -->
     <script>
-        // Set Today's Date automatically in the Input Date
-        document.getElementById('new-date').valueAsDate = new Date();
-
-        // Default Student Budgets
-        let budgets = {
-            Cash: 500000,
-            "E-wallet": 1000000,
-            BNI: 1500000
-        };
-
-        // Default Transactions Array
+        // Core Database Memory State (MANDATORY: Defaults are clean & empty)
         let transactions = [];
+        let budgets = {
+            "Cash": 0,
+            "E-wallet": 0,
+            "Bank": 0
+        };
+        let isAutoSyncEnabled = false;
 
-        // Integrations State
-        let googleWebAppUrl = "";
-        let autoSync = false;
-        let isSyncing = false;
-
-        // Sample Data to populate dashboard at startup
-        const sampleTransactions = [
-            { id: 1, checked: true, date: "2026-05-01", detail: "Sedekah subuh berkah", nominal: 2000, account: "E-wallet", category: "Giving" },
-            { id: 2, checked: false, date: "2026-05-01", detail: "Tiket bioskop akhir pekan", nominal: 35000, account: "Cash", category: "Playing" },
-            { id: 3, checked: false, date: "2026-05-01", detail: "Makan Popmie + es teh manis", nominal: 15000, account: "Cash", category: "Playing" },
-            { id: 4, checked: true, date: "2026-05-02", detail: "Soto ayam kantin fakultas", nominal: 13000, account: "Cash", category: "Living" },
-            { id: 5, checked: false, date: "2026-05-03", detail: "Paket internet bulanan", nominal: 150000, account: "BNI", category: "Living" }
-        ];
-
-        // Custom notification toaster function
-        function showToast(message, type = "success") {
-            const container = document.getElementById("toast-container");
-            const toast = document.createElement("div");
-            
-            const bgClass = type === "success" 
-                ? "bg-sage-800 border-emerald-500" 
-                : (type === "info" ? "bg-sage-700 border-sage-400" : "bg-rose-900 border-rose-500");
-            const icon = type === "success" 
-                ? "fa-circle-check text-emerald-400" 
-                : (type === "info" ? "fa-circle-info text-sage-300" : "fa-circle-exclamation text-rose-400");
-
-            toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl border text-white text-xs font-semibold shadow-lg transition-all duration-300 transform translate-y-5 opacity-0 ${bgClass}`;
-            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
-            
-            container.appendChild(toast);
-
-            // Trigger animation
-            setTimeout(() => {
-                toast.classList.remove("translate-y-5", "opacity-0");
-            }, 50);
-
-            // Remove Toast after delay
-            setTimeout(() => {
-                toast.classList.add("translate-y-5", "opacity-0");
-                setTimeout(() => { toast.remove(); }, 300);
-            }, 3500);
-        }
-
-        // Initialize and fetch state storage
+        // Initialize state, load permanent browser storage, and pull from sheets if available
         function init() {
-            if (localStorage.getItem("sage_budgets")) {
-                budgets = JSON.parse(localStorage.getItem("sage_budgets"));
+            // Load transactions from localStorage
+            const savedTx = localStorage.getItem("sage_transactions");
+            if (savedTx) {
+                transactions = JSON.parse(savedTx);
             } else {
-                localStorage.setItem("sage_budgets", JSON.stringify(budgets));
+                transactions = []; // Ensure empty array if not defined
             }
 
-            if (localStorage.getItem("sage_transactions")) {
-                transactions = JSON.parse(localStorage.getItem("sage_transactions"));
+            // Load budgets from localStorage
+            const savedBudgets = localStorage.getItem("sage_budgets");
+            if (savedBudgets) {
+                budgets = JSON.parse(savedBudgets);
             } else {
-                transactions = sampleTransactions;
-                localStorage.setItem("sage_transactions", JSON.stringify(transactions));
+                budgets = { "Cash": 0, "E-wallet": 0, "Bank": 0 }; // Ensure zero state initially
             }
 
-            if (localStorage.getItem("sage_bills")) {
-                document.getElementById('total-bills').value = localStorage.getItem("sage_bills");
-            }
-            if (localStorage.getItem("sage_debts")) {
-                document.getElementById('total-debts').value = localStorage.getItem("sage_debts");
-            }
-
-            // Load Google URL from memory
-            if (localStorage.getItem("sage_google_url")) {
-                googleWebAppUrl = localStorage.getItem("sage_google_url");
-                document.getElementById("google-url-input").value = googleWebAppUrl;
-                updateSyncUI(true);
+            // Load Daily Budget Limit
+            const savedDailyBudget = localStorage.getItem("sage_daily_budget");
+            if (savedDailyBudget) {
+                document.getElementById("daily-budget-input").value = savedDailyBudget;
             }
 
-            // Load Auto Sync Preference
-            if (localStorage.getItem("sage_auto_sync")) {
-                autoSync = localStorage.getItem("sage_auto_sync") === "true";
-                document.getElementById("auto-sync-toggle").checked = autoSync;
+            // Load API Web-app URL
+            const savedApiUrl = localStorage.getItem("sage_gas_url");
+            if (savedApiUrl) {
+                document.getElementById("api-url").value = savedApiUrl;
+                updateSyncBadge("cloud", "Koneksi Tersedia");
+                
+                // Auto load cloud data at startup if URL exists
+                pullFromSheets(true); // Silent mode on load
+            } else {
+                updateSyncBadge("offline", "Lokal (Belum Sinkron)");
             }
 
-            switchAccountBudget();
+            // Load Autosync preference
+            const savedAutoSync = localStorage.getItem("sage_autosync");
+            if (savedAutoSync === "true") {
+                isAutoSyncEnabled = true;
+                document.getElementById("auto-sync").checked = true;
+            }
+
+            // Set current date input default values
+            document.getElementById('new-date').valueAsDate = new Date();
+
+            // Refresh Interface Layout
             renderTable();
         }
 
-        // Google Web App Sync Integration Core Actions
-        function saveGoogleUrl() {
-            googleWebAppUrl = document.getElementById("google-url-input").value.trim();
-            localStorage.setItem("sage_google_url", googleWebAppUrl);
-            updateSyncUI(googleWebAppUrl.length > 0);
-        }
-
-        function toggleAutoSync() {
-            autoSync = document.getElementById("auto-sync-toggle").checked;
-            localStorage.setItem("sage_auto_sync", autoSync);
-            if (autoSync) {
-                showToast("Auto-Kirim aktif! Setiap perubahan akan disinkronisasikan.", "success");
+        // Complete Reset Option
+        function clearAllData() {
+            if (confirm("Apakah Anda yakin ingin menghapus semua data transaksi dan anggaran dari penyimpanan browser?")) {
+                transactions = [];
+                budgets = { "Cash": 0, "E-wallet": 0, "Bank": 0 };
+                localStorage.removeItem("sage_transactions");
+                localStorage.removeItem("sage_budgets");
+                localStorage.removeItem("sage_daily_budget");
+                document.getElementById("daily-budget-input").value = "";
+                renderTable();
+                showToast("Penyimpanan lokal berhasil dikosongkan.");
                 triggerAutoSync();
-            } else {
-                showToast("Auto-Kirim dinonaktifkan.", "info");
             }
         }
 
-        function updateSyncUI(isConnected) {
+        // Toggle state expansion panel
+        function toggleCollapse(panelId) {
+            const panel = document.getElementById(panelId);
+            const icon = document.getElementById(panelId + "-icon");
+            panel.classList.toggle("hidden");
+            if (icon) {
+                icon.classList.toggle("rotate-180");
+            }
+        }
+
+        // Save Custom Script URL inside LocalStorage
+        function saveApiUrl() {
+            const urlVal = document.getElementById("api-url").value.trim();
+            if (urlVal === "") {
+                localStorage.removeItem("sage_gas_url");
+                showToast("Alamat API URL dihapus dari penyimpanan.", "info");
+                updateSyncBadge("offline", "Lokal (Belum Sinkron)");
+            } else {
+                localStorage.setItem("sage_gas_url", urlVal);
+                showToast("Alamat API URL tersimpan dengan aman!");
+                updateSyncBadge("cloud", "Terhubung (Menunggu Sinkron)");
+                pullFromSheets(); // Auto-fetch when connected
+            }
+        }
+
+        function toggleAutoSync(el) {
+            isAutoSyncEnabled = el.checked;
+            localStorage.setItem("sage_autosync", isAutoSyncEnabled ? "true" : "false");
+            showToast(`Auto-Sync sekarang ${isAutoSyncEnabled ? "Aktif" : "Non-aktif"}`, "info");
+        }
+
+        // Sync State Badge Interface Builder
+        function updateSyncBadge(state, message) {
             const statusEl = document.getElementById("sync-status");
-            if (isConnected) {
-                statusEl.innerHTML = 'Status: <span class="text-emerald-600 font-bold">Terhubung (Google Sheets)</span>';
+            if (state === "offline") {
+                statusEl.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-orange-100 text-orange-700 border border-orange-200 flex items-center gap-1.5";
+                statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-orange-500"></span> ${message}`;
+            } else if (state === "syncing") {
+                statusEl.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 border border-blue-200 flex items-center gap-1.5 animate-pulse";
+                statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-500 animate-spin"></span> Menyinkronkan...`;
+            } else if (state === "success") {
+                statusEl.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center gap-1.5";
+                statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> ${message}`;
+            } else if (state === "error") {
+                statusEl.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-red-100 text-red-700 border border-red-200 flex items-center gap-1.5";
+                statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500"></span> ${message}`;
             } else {
-                statusEl.innerHTML = 'Status: <span class="text-sage-500 font-semibold">Mode Offline (Lokal)</span>';
+                statusEl.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-sage-100 text-sage-700 border border-sage-200 flex items-center gap-1.5";
+                statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-sage-500"></span> ${message}`;
             }
         }
 
-        function toggleUrlVisibility() {
-            const input = document.getElementById("google-url-input");
-            const icon = document.getElementById("toggle-eye-icon");
-            if (input.type === "password") {
-                input.type = "text";
-                icon.className = "fa-regular fa-eye-slash";
+        // Safe dynamic call for immediate auto syncing if enabled
+        function triggerAutoSync() {
+            if (isAutoSyncEnabled) {
+                pushToSheets(true); // Silent mode
             } else {
-                input.type = "password";
-                icon.className = "fa-regular fa-eye";
+                updateSyncBadge("offline", "Lokal (Belum Sinkron)");
             }
         }
 
-        // PUSH DATA (LOCAL -> GOOGLE SHEETS)
-        async function pushToGoogleSheets() {
-            if (!googleWebAppUrl) {
-                showToast("Harap masukkan Google Web App URL terlebih dahulu!", "error");
-                openInstructions();
+        // PUSH DATA: Send to Google Spreadsheet (CORS Safe)
+        function pushToSheets(isSilent = false) {
+            const apiUrl = localStorage.getItem("sage_gas_url");
+            if (!apiUrl) {
+                if (!isSilent) showToast("Silakan atur & simpan API URL Anda terlebih dahulu di bagian bawah halaman!", "error");
                 return;
             }
 
-            setSyncingState(true);
-            showToast("Memulai sinkronisasi & menata ulang Google Sheets...", "info");
+            updateSyncBadge("syncing");
 
-            try {
-                // Send as text/plain to avoid CORS preflight failures on Web Apps
-                const response = await fetch(googleWebAppUrl, {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8',
-                    },
-                    body: JSON.stringify({
-                        budgets: budgets,
-                        transactions: transactions
-                    })
-                });
+            const payload = {
+                budgets: budgets,
+                transactions: transactions
+            };
 
-                const result = await response.json();
-                
-                if (result.status === "success") {
-                    showToast("Yay! Data terkirim & Google Sheets Anda berhasil dirapikan otomatis.", "success");
-                } else {
-                    showToast("Gagal menyimpan: " + result.message, "error");
-                }
-            } catch (error) {
-                console.error("Sync error:", error);
-                showToast("Koneksi gagal. Periksa kembali URL Deployment Apps Script Anda.", "error");
-            } finally {
-                setSyncingState(false);
-            }
+            // Using text/plain to bypass CORS Preflight blocks in certain browsers
+            fetch(apiUrl, {
+                method: "POST",
+                mode: "no-cors", 
+                headers: {
+                    "Content-Type": "text/plain"
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                updateSyncBadge("success", "Sinkronisasi Berhasil");
+                if (!isSilent) showToast("Berhasil mengirim data ke Google Sheets Anda!");
+            })
+            .catch(err => {
+                console.error("Sync Error: ", err);
+                updateSyncBadge("error", "Sinkronisasi Gagal");
+                if (!isSilent) showToast("Gagal menyinkronkan dengan spreadsheet. Coba periksa kembali URL API Anda.", "error");
+            });
         }
 
-        // PULL DATA (GOOGLE SHEETS -> LOCAL)
-        async function pullFromGoogleSheets() {
-            if (!googleWebAppUrl) {
-                showToast("Harap masukkan Google Web App URL terlebih dahulu!", "error");
-                openInstructions();
+        // PULL DATA: Fetch directly from Google Spreadsheet
+        function pullFromSheets(isSilent = false) {
+            const apiUrl = localStorage.getItem("sage_gas_url");
+            if (!apiUrl) {
+                if (!isSilent) showToast("Atur & simpan API URL terlebih dahulu!", "error");
                 return;
             }
 
-            setSyncingState(true);
-            showToast("Mengambil data terbaru dari Google Sheets...", "info");
+            if (!isSilent) updateSyncBadge("syncing");
 
-            try {
-                const response = await fetch(googleWebAppUrl);
-                const result = await response.json();
-
-                if (result.status === "success") {
+            fetch(apiUrl)
+            .then(res => {
+                if (!res.ok) throw new Error("Network Response Error");
+                return res.json();
+            })
+            .then(data => {
+                if (data.status === "success") {
                     let hasChanges = false;
                     
-                    if (result.budgets) {
-                        budgets = result.budgets;
+                    if (data.budgets) {
+                        budgets = data.budgets;
                         localStorage.setItem("sage_budgets", JSON.stringify(budgets));
                         hasChanges = true;
                     }
-
-                    if (result.transactions) {
-                        transactions = result.transactions;
+                    if (data.transactions) {
+                        transactions = data.transactions;
                         localStorage.setItem("sage_transactions", JSON.stringify(transactions));
                         hasChanges = true;
                     }
-
-                    if (hasChanges) {
-                        switchAccountBudget();
-                        renderTable();
-                        showToast("Sinkronisasi sukses! Data lokal telah diperbarui.", "success");
-                    } else {
-                        showToast("Spreadsheet Anda kosong. Belum ada data untuk diunduh.", "info");
-                    }
+                    
+                    renderTable();
+                    updateSyncBadge("success", "Data Ter-sinkron");
+                    if (!isSilent) showToast("Data terbaru berhasil diunduh dari Google Sheets!");
                 } else {
-                    showToast("Gagal mengunduh data: " + result.message, "error");
+                    throw new Error(data.message || "Unknown error");
                 }
-            } catch (error) {
-                console.error("Sync error:", error);
-                showToast("Gagal mengambil data. Pastikan otorisasi izin script sudah benar.", "error");
-            } finally {
-                setSyncingState(false);
-            }
-        }
-
-        function setSyncingState(syncing) {
-            isSyncing = syncing;
-            const pushBtn = document.getElementById("btn-push");
-            const pullBtn = document.getElementById("btn-pull");
-            
-            if (syncing) {
-                pushBtn.disabled = true;
-                pullBtn.disabled = true;
-                pushBtn.innerHTML = `<i class="fa-solid fa-arrows-rotate animate-spin"></i> Proses...`;
-            } else {
-                pushBtn.disabled = false;
-                pullBtn.disabled = false;
-                pushBtn.innerHTML = `<i class="fa-solid fa-upload"></i> Kirim Data`;
-            }
-        }
-
-        function triggerAutoSync() {
-            if (autoSync && googleWebAppUrl) {
-                pushToGoogleSheets();
-            }
-        }
-
-        // Guide Modal Actions
-        function openInstructions() {
-            document.getElementById("instructions-modal").classList.remove("hidden");
-        }
-
-        function closeInstructions() {
-            document.getElementById("instructions-modal").classList.add("hidden");
-        }
-
-        function copyAppsScript() {
-            const scriptText = document.getElementById("apps-script-code").innerText;
-            
-            // Reliable iframe safe clipboard copy
-            const el = document.createElement('textarea');
-            el.value = scriptText;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-
-            const btnText = document.getElementById("copy-btn-text");
-            btnText.innerText = "Tersalin!";
-            setTimeout(() => {
-                btnText.innerText = "Salin Kode";
-            }, 2000);
-            
-            showToast("Kode Apps Script berhasil disalin ke clipboard!", "success");
-        }
-
-        // Drop-down handler for Switch active accounts
-        function switchAccountBudget() {
-            const selectedAccount = document.getElementById("active-account-select").value;
-            document.getElementById("budget-input").value = budgets[selectedAccount];
-            calculateStats();
-        }
-
-        // Update target budgets dynamically on input
-        function updateAccountBudget() {
-            const selectedAccount = document.getElementById("active-account-select").value;
-            const newBudgetVal = parseFloat(document.getElementById("budget-input").value) || 0;
-            
-            budgets[selectedAccount] = newBudgetVal;
-            localStorage.setItem("sage_budgets", JSON.stringify(budgets));
-            
-            calculateStats();
-            triggerAutoSync();
-        }
-
-        // Toggle Expandable settings area
-        function toggleUtilityDrawer() {
-            const drawer = document.getElementById("utility-drawer");
-            const chevron = document.getElementById("drawer-chevron");
-            drawer.classList.toggle("hidden");
-            chevron.classList.toggle("rotate-180");
-        }
-
-        // Toggle Expandable Formula cheat sheet
-        function toggleFormulaGuide() {
-            const guide = document.getElementById("formula-guide");
-            const chevron = document.getElementById("guide-chevron");
-            guide.classList.toggle("hidden");
-            chevron.classList.toggle("rotate-180");
-        }
-
-        // Format money to local currency format
-        function formatIDR(val) {
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
-        }
-
-        // Save Bills & Debts fields
-        function saveGlobalStats() {
-            localStorage.setItem("sage_bills", document.getElementById('total-bills').value);
-            localStorage.setItem("sage_debts", document.getElementById('total-debts').value);
-            calculateStats();
-        }
-
-        // Calculation core for entire application statistics and progress bar
-        function calculateStats() {
-            const selectedAccount = document.getElementById("active-account-select").value;
-            
-            let totalSpentAll = 0;
-            let spentOnSelectedAccount = 0;
-
-            transactions.forEach(t => {
-                totalSpentAll += t.nominal;
-                if (t.account === selectedAccount) {
-                    spentOnSelectedAccount += t.nominal;
+            })
+            .catch(err => {
+                console.error("Load Error: ", err);
+                if (!isSilent) {
+                    updateSyncBadge("error", "Gagal Memuat Data");
+                    showToast("Gagal mengunduh data dari Cloud. Cek izin deployment web app Anda.", "error");
                 }
             });
-
-            // Display global calculations
-            document.getElementById("header-total-spent").innerText = formatIDR(totalSpentAll);
-            document.getElementById("expense-display").value = formatIDR(spentOnSelectedAccount);
-
-            // Handle budget progress bar dynamically
-            const targetBudget = budgets[selectedAccount] || 0;
-            const remaining = targetBudget - spentOnSelectedAccount;
-            
-            document.getElementById("remaining-display").innerText = formatIDR(remaining);
-
-            const remainingStatusText = document.getElementById("remaining-percentage-status");
-            const progressBar = document.getElementById("budget-progress-bar");
-            const percentageLabel = document.getElementById("progress-percentage-label");
-
-            let percentUsed = targetBudget > 0 ? Math.round((spentOnSelectedAccount / targetBudget) * 100) : 0;
-            percentageLabel.innerText = `${percentUsed}% Terpakai`;
-
-            // Animate progress limit widths safely
-            const renderPercent = Math.min(percentUsed, 100);
-            progressBar.style.width = `${renderPercent}%`;
-
-            // Dynamic color alerts based on budget thresholds
-            if (percentUsed >= 100) {
-                progressBar.className = "bg-rose-500 h-full rounded-full transition-all duration-500 ease-out";
-                remainingStatusText.innerText = "Over-budget! ⚠️";
-                remainingStatusText.className = "text-rose-500 font-bold";
-            } else if (percentUsed >= 80) {
-                progressBar.className = "bg-amber-500 h-full rounded-full transition-all duration-500 ease-out";
-                remainingStatusText.innerText = "Mendekati Batas 🔔";
-                remainingStatusText.className = "text-amber-500 font-semibold";
-            } else {
-                progressBar.className = "bg-emerald-500 h-full rounded-full transition-all duration-500 ease-out";
-                remainingStatusText.innerText = "Sangat Aman ✓";
-                remainingStatusText.className = "text-emerald-600 font-medium";
-            }
-
-            // Calculation for total global money owned
-            const grandTotalMoney = budgets["Cash"] + budgets["E-wallet"] + budgets["BNI"];
-            document.getElementById("grand-total-money").innerText = formatIDR(grandTotalMoney);
-
-            const pctAllocatedLabel = document.getElementById("percent-allocated");
-            const pctUnallocatedLabel = document.getElementById("percent-unallocated");
-
-            if (grandTotalMoney > 0) {
-                const percentAllocated = Math.round((totalSpentAll / grandTotalMoney) * 100);
-                const boundedPercent = Math.min(100, percentAllocated);
-                pctAllocatedLabel.innerText = boundedPercent + "%";
-                pctUnallocatedLabel.innerText = (100 - boundedPercent) + "%";
-            } else {
-                pctAllocatedLabel.innerText = "0%";
-                pctUnallocatedLabel.innerText = "100%";
-            }
         }
 
-        // Render rows of the financial spreadsheet
-        function renderTable() {
-            const tbody = document.getElementById("table-body");
-            tbody.innerHTML = "";
-
-            document.getElementById("table-row-count").innerText = `${transactions.length} Transaksi`;
-
-            if (transactions.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="px-6 py-12 text-center text-sage-400 italic bg-sage-50/20">
-                            <i class="fa-solid fa-folder-open text-2xl mb-2 block text-sage-200"></i>
-                            Belum ada pengeluaran dicatat hari ini. Ayo isi form di atas!
-                        </td>
-                    </tr>`;
+        // Connection Test Function
+        function testConnection() {
+            const apiUrl = document.getElementById("api-url").value.trim();
+            if (apiUrl === "") {
+                showToast("Masukkan URL terlebih dahulu sebelum mengetes!", "error");
                 return;
             }
-
-            // Render transactions sorted from newest to oldest
-            transactions.forEach((t) => {
-                const row = document.createElement("tr");
-                row.className = `hover:bg-sage-50/50 transition-colors ${t.checked ? 'bg-sage-50/20' : ''}`;
-
-                // Row checkbox checkmark
-                const checkCell = `
-                    <td class="px-6 py-4 text-center">
-                        <input type="checkbox" class="w-4 h-4 text-sage-700 border-sage-300 rounded focus:ring-sage-500 focus:ring-2 cursor-pointer accent-sage-700" ${t.checked ? "checked" : ""} onchange="toggleCheck(${t.id})">
-                    </td>`;
-
-                // Date field
-                const dateCell = `<td class="px-6 py-4 whitespace-nowrap font-medium text-sage-500">${formatDate(t.date)}</td>`;
-
-                // Detail descriptive text
-                const detailCell = `<td class="px-6 py-4 font-medium ${t.checked ? 'line-through text-sage-300' : 'text-sage-800'}">${t.detail}</td>`;
-
-                // Nominal value format
-                const nominalCell = `<td class="px-6 py-4 text-right font-semibold ${t.checked ? 'text-sage-300' : 'text-sage-900'}">${formatIDR(t.nominal)}</td>`;
-                
-                // Account Badge styles
-                const accountBadge = t.account === 'Cash' 
-                    ? 'bg-amber-50 text-amber-700 border-amber-200' 
-                    : (t.account === 'BNI' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' : 'bg-cyan-50 text-cyan-700 border-cyan-200');
-                const accountCell = `<td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-1 text-[11px] font-semibold rounded-full border ${accountBadge}">${t.account}</span></td>`;
-                
-                // Category Badge styles
-                const categoryBadge = t.category === 'Living' 
-                    ? 'bg-emerald-50 text-emerald-700' 
-                    : (t.category === 'Giving' ? 'bg-pink-50 text-pink-700' : 'bg-purple-50 text-purple-700');
-                const categoryCell = `<td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-1 text-[11px] font-semibold rounded-full ${categoryBadge}">${t.category}</span></td>`;
-                
-                // Delete actions
-                const deleteCell = `
-                    <td class="px-6 py-4 text-center">
-                        <button class="text-rose-400 hover:text-rose-600 transition-colors p-1" onclick="deleteTransaction(${t.id})" title="Hapus transaksi">
-                            <i class="fa-regular fa-trash-can"></i>
-                        </button>
-                    </td>`;
-
-                row.innerHTML = checkCell + dateCell + detailCell + nominalCell + accountCell + categoryCell + deleteCell;
-                tbody.appendChild(row);
+            
+            showToast("Menghubungi endpoint...", "info");
+            fetch(apiUrl)
+            .then(res => {
+                if (res.ok) {
+                    showToast("Koneksi berhasil! Apps Script merespons dengan baik.");
+                } else {
+                    showToast("Apps Script merespons tetapi mengembalikan status error.", "error");
+                }
+            })
+            .catch(err => {
+                showToast("Koneksi ditolak atau URL salah. Cek CORS / deployment Anda.", "error");
             });
-
-            calculateStats();
         }
 
-        // Toggle transaction completed state
-        function toggleCheck(id) {
-            transactions = transactions.map(t => {
-                if (t.id === id) t.checked = !t.checked;
-                return t;
+        // Set Daily Budget limit value
+        function updateDailyBudget() {
+            const val = parseFloat(document.getElementById("daily-budget-input").value) || 0;
+            localStorage.setItem("sage_daily_budget", val);
+            calculateDailyBudgetStats();
+        }
+
+        // Calculate Daily budget and trigger alerts (Excludes Kos/Bulanan and Kuliah)
+        function calculateDailyBudgetStats() {
+            const dailyBudgetLimit = parseFloat(localStorage.getItem("sage_daily_budget")) || 0;
+            
+            // Get today's local date string YYYY-MM-DD
+            const d = new Date();
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const todayStr = `${year}-${month}-${day}`;
+
+            let dailySpent = 0;
+            transactions.forEach(t => {
+                // EXCLUDE 'Kuliah' (UKT) and 'Kos/Bulanan' from the daily spend calculation
+                if (t.date === todayStr && t.category !== "Kuliah" && t.category !== "Kos/Bulanan") {
+                    dailySpent += t.nominal;
+                }
             });
-            localStorage.setItem("sage_transactions", JSON.stringify(transactions));
+
+            document.getElementById("daily-spent-text").innerText = formatRupiah(dailySpent);
+
+            const badge = document.getElementById("daily-status-badge");
+            const dailyProgress = document.getElementById("daily-progress");
+            const warningBanner = document.getElementById("daily-warning-banner");
+
+            if (dailyBudgetLimit > 0) {
+                const percent = Math.min(100, Math.round((dailySpent / dailyBudgetLimit) * 100));
+                dailyProgress.style.width = `${percent}%`;
+
+                if (percent >= 100) {
+                    dailyProgress.className = "bg-red-500 h-full transition-all duration-300";
+                    badge.innerText = "Melebihi Limit! ⚠️";
+                    badge.className = "text-red-600 bg-red-50 px-1.5 py-0.5 rounded font-bold animate-pulse";
+                    
+                    // Show warning banner
+                    document.getElementById("warning-banner-spent").innerText = formatRupiah(dailySpent);
+                    document.getElementById("warning-banner-limit").innerText = formatRupiah(dailyBudgetLimit);
+                    warningBanner.classList.remove("hidden");
+                } else if (percent >= 80) {
+                    dailyProgress.className = "bg-amber-500 h-full transition-all duration-300";
+                    badge.innerText = "Mendekati Batas 🔔";
+                    badge.className = "text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded font-bold";
+                    warningBanner.classList.add("hidden");
+                } else {
+                    dailyProgress.className = "bg-emerald-600 h-full transition-all duration-300";
+                    badge.innerText = "Aman ✅";
+                    badge.className = "text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded font-bold";
+                    warningBanner.classList.add("hidden");
+                }
+            } else {
+                dailyProgress.style.width = "0%";
+                badge.innerText = "Belum Diatur ⚙️";
+                badge.className = "text-sage-500 bg-sage-100 px-1.5 py-0.5 rounded font-bold";
+                warningBanner.classList.add("hidden");
+            }
+        }
+
+        // Render Ledger Dashboard Engine
+        function renderTable() {
+            const filterAcc = document.getElementById("filter-account").value;
+            const filterCat = document.getElementById("filter-category").value;
+            const filterStatus = document.getElementById("filter-status").value;
+
+            const ledgerBody = document.getElementById("ledger-body");
+            const emptyState = document.getElementById("empty-state");
+            
+            ledgerBody.innerHTML = "";
+
+            // Calculate spent amount dynamically based on Category/Account parameters
+            let spentCountMap = { "Cash": 0, "E-wallet": 0, "Bank": 0 };
+            let filteredTransactions = [];
+            let totalSpentAll = 0;
+
+            transactions.forEach(t => {
+                spentCountMap[t.account] += t.nominal;
+                totalSpentAll += t.nominal;
+
+                // Fitler Criteria Engine matching
+                const matchesAcc = (filterAcc === "ALL" || t.account === filterAcc);
+                const matchesCat = (filterCat === "ALL" || t.category === filterCat);
+                const matchesStatus = (filterStatus === "ALL" || 
+                                       (filterStatus === "Lunas" && t.checked) || 
+                                       (filterStatus === "Belum" && !t.checked));
+
+                if (matchesAcc && matchesCat && matchesStatus) {
+                    filteredTransactions.push(t);
+                }
+            });
+
+            // Update Budget Info & Cards (Shows both Spent & Sisa)
+            updateAccountCard("Cash", budgets["Cash"], spentCountMap["Cash"]);
+            updateAccountCard("E-wallet", budgets["E-wallet"], spentCountMap["E-wallet"]);
+            updateAccountCard("Bank", budgets["Bank"], spentCountMap["Bank"]);
+
+            const totalPortfolio = budgets["Cash"] + budgets["E-wallet"] + budgets["Bank"];
+            document.getElementById("total-portfolio-text").innerText = formatRupiah(totalPortfolio);
+
+            // Populate Rows
+            if (filteredTransactions.length === 0) {
+                emptyState.classList.remove("hidden");
+            } else {
+                emptyState.classList.add("hidden");
+                filteredTransactions.forEach((t) => {
+                    const tr = document.createElement("tr");
+                    tr.className = `border-b border-sage-50 transition hover:bg-sage-50/50 ${t.checked ? "text-sage-400 bg-sage-50/20" : ""}`;
+                    
+                    tr.innerHTML = `
+                        <td class="py-3 px-2 text-center">
+                            <input type="checkbox" ${t.checked ? "checked" : ""} onchange="toggleChecked(${t.id})" class="w-4 h-4 rounded border-sage-300 text-sage-600 focus:ring-sage-500 cursor-pointer">
+                        </td>
+                        <td class="py-3 px-2 text-sage-500 font-semibold text-[11px]">${formatDate(t.date)}</td>
+                        <td class="py-3 px-2 font-medium ${t.checked ? "line-through" : "text-sage-900"}">${t.detail}</td>
+                        <td class="py-3 px-2 text-center">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${getAccountLabelClass(t.account)}">${t.account}</span>
+                        </td>
+                        <td class="py-3 px-2 text-center">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-sage-100 text-sage-700">${t.category}</span>
+                        </td>
+                        <td class="py-3 px-2 text-right font-bold text-sage-900 ${t.checked ? "text-sage-400 line-through" : ""}">${formatRupiah(t.nominal)}</td>
+                        <td class="py-3 px-2 text-center">
+                            <button onclick="deleteTransaction(${t.id})" class="text-sage-400 hover:text-red-500 transition text-[11px]">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    `;
+                    ledgerBody.appendChild(tr);
+                });
+            }
+
+            // Summary Info Section update values
+            document.getElementById("displayed-count").innerText = filteredTransactions.length;
+            document.getElementById("total-count").innerText = transactions.length;
+            document.getElementById("grand-total-spent").innerText = formatRupiah(totalSpentAll);
+
+            // Re-calculate the daily budget metrics on table redraw
+            calculateDailyBudgetStats();
+        }
+
+        // Card rendering optimization parameters helper
+        function updateAccountCard(accId, target, spent) {
+            const keyPrefix = accId.toLowerCase().replace("-", "");
+            document.getElementById(`${keyPrefix}-budget-text`).innerText = formatRupiah(target);
+            document.getElementById(`${keyPrefix}-spent-text`).innerText = formatRupiah(spent);
+            
+            // Sisa Budget calculation
+            const sisa = target - spent;
+            const sisaTextEl = document.getElementById(`${keyPrefix}-sisa-text`);
+            sisaTextEl.innerText = formatRupiah(sisa);
+            
+            // Change color dynamically based on budget state
+            if (sisa < 0) {
+                sisaTextEl.className = "text-red-600 font-extrabold";
+            } else {
+                sisaTextEl.className = "text-emerald-600 font-extrabold";
+            }
+            
+            // Calculate Percent ratio
+            let percent = 0;
+            if (target > 0) {
+                percent = Math.min(100, Math.round((spent / target) * 100));
+            }
+            
+            document.getElementById(`${keyPrefix}-percent-text`).innerText = `${percent}%`;
+            
+            const progressEl = document.getElementById(`${keyPrefix}-progress`);
+            progressEl.style.width = `${percent}%`;
+
+            // Style progress color dynamically
+            if (percent >= 90) {
+                progressEl.className = "bg-red-500 h-full transition-all duration-500";
+            } else if (percent >= 75) {
+                progressEl.className = "bg-amber-500 h-full transition-all duration-500";
+            } else {
+                progressEl.className = "bg-sage-600 h-full transition-all duration-500";
+            }
+        }
+
+        function getAccountLabelClass(acc) {
+            if (acc === "Cash") return "bg-emerald-50 text-emerald-700 border border-emerald-100";
+            if (acc === "E-wallet") return "bg-indigo-50 text-indigo-700 border border-indigo-100";
+            return "bg-blue-50 text-blue-700 border border-blue-100"; // Bank
+        }
+
+        // Budget Modals Management
+        function openBudgetModal(accName) {
+            document.getElementById("modal-account-name").innerText = accName;
+            document.getElementById("modal-account-id").value = accName;
+            document.getElementById("modal-budget-input").value = budgets[accName] || 0;
+            
+            const modal = document.getElementById("budget-modal");
+            modal.classList.remove("hidden");
+            setTimeout(() => {
+                modal.children[0].classList.remove("scale-95");
+            }, 10);
+        }
+
+        function closeBudgetModal() {
+            const modal = document.getElementById("budget-modal");
+            modal.children[0].classList.add("scale-95");
+            setTimeout(() => {
+                modal.classList.add("hidden");
+            }, 150);
+        }
+
+        function saveNewBudget(e) {
+            e.preventDefault();
+            const accName = document.getElementById("modal-account-id").value;
+            const newBudgetVal = parseInt(document.getElementById("modal-budget-input").value) || 0;
+            
+            budgets[accName] = newBudgetVal;
+            localStorage.setItem("sage_budgets", JSON.stringify(budgets));
+            
+            closeBudgetModal();
             renderTable();
+            showToast(`Budget ${accName} berhasil disesuaikan!`);
             triggerAutoSync();
         }
 
-        // Delete particular transaction
+        // Checkbox status changer
+        function toggleChecked(id) {
+            const tx = transactions.find(t => t.id === id);
+            if (tx) {
+                tx.checked = !tx.checked;
+                localStorage.setItem("sage_transactions", JSON.stringify(transactions));
+                renderTable();
+                showToast(`Status transaksi "${tx.detail}" diubah.`);
+                triggerAutoSync();
+            }
+        }
+
+        // Transaction Delete Logic
         function deleteTransaction(id) {
-            transactions = transactions.filter(t => t.id !== id);
-            localStorage.setItem("sage_transactions", JSON.stringify(transactions));
-            renderTable();
-            showToast("Transaksi berhasil dihapus dari daftar.", "info");
-            triggerAutoSync();
+            const index = transactions.findIndex(t => t.id === id);
+            if (index > -1) {
+                const targetTx = transactions[index];
+                if (confirm(`Hapus transaksi "${targetTx.detail}"?`)) {
+                    transactions.splice(index, 1);
+                    localStorage.setItem("sage_transactions", JSON.stringify(transactions));
+                    renderTable();
+                    showToast(`Transaksi berhasil dihapus.`);
+                    triggerAutoSync();
+                }
+            }
         }
 
-        // Add transaction validation logic
-        function addTransaction() {
-            const dateVal = document.getElementById("new-date").value;
+        // Form Submission Add Action
+        function addTransaction(e) {
+            e.preventDefault();
             const detailVal = document.getElementById("new-detail").value.trim();
-            const nominalVal = parseFloat(document.getElementById("new-nominal").value);
+            const nominalVal = parseInt(document.getElementById("new-nominal").value) || 0;
+            const dateVal = document.getElementById("new-date").value;
             const accountVal = document.getElementById("new-account").value;
             const categoryVal = document.getElementById("new-category").value;
 
-            if (!dateVal || !detailVal || isNaN(nominalVal) || nominalVal <= 0) {
-                showToast("Harap isi semua kolom formulir dengan benar!", "error");
+            if (detailVal === "" || nominalVal <= 0 || !dateVal) {
+                showToast("Harap lengkapi semua formulir dengan benar!", "error");
                 return;
             }
 
@@ -1163,9 +975,31 @@ function onOpen() {
             renderTable();
             showToast(`Berhasil menambahkan: "${detailVal}"`);
             triggerAutoSync();
+
+            // Extra warning toast if newly added transaction causes Daily budget limit to exceed
+            const dailyBudgetLimit = parseFloat(localStorage.getItem("sage_daily_budget")) || 0;
+            if (dailyBudgetLimit > 0 && categoryVal !== "Kuliah" && categoryVal !== "Kos/Bulanan") {
+                const d = new Date();
+                const todayStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                if (dateVal === todayStr) {
+                    let dailySpent = 0;
+                    transactions.forEach(t => {
+                        if (t.date === todayStr && t.category !== "Kuliah" && t.category !== "Kos/Bulanan") {
+                            dailySpent += t.nominal;
+                        }
+                    });
+                    if (dailySpent > dailyBudgetLimit) {
+                        showToast("⚠️ Perhatian: Transaksi ini menyebabkan budget harian Anda terlampaui!", "error");
+                    }
+                }
+            }
         }
 
-        // Date parser (Day-Month-Year format)
+        // Helpers for styling formats
+        function formatRupiah(num) {
+            return "Rp " + num.toLocaleString("id-ID");
+        }
+
         function formatDate(dateStr) {
             const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
             const parts = dateStr.split("-");
@@ -1176,6 +1010,41 @@ function onOpen() {
                 return `${day} ${month} ${year}`;
             }
             return dateStr;
+        }
+
+        // Animated Sleek Toast Creator
+        function showToast(message, type = "success") {
+            const portal = document.getElementById("toast-portal");
+            const toast = document.createElement("div");
+            
+            let colorClass = "bg-white text-sage-800 border-sage-200";
+            let icon = `<i class="fa-solid fa-circle-check text-emerald-500"></i>`;
+            
+            if (type === "error") {
+                colorClass = "bg-red-50 text-red-800 border-red-200";
+                icon = `<i class="fa-solid fa-triangle-exclamation text-red-500"></i>`;
+            } else if (type === "info") {
+                colorClass = "bg-blue-50 text-blue-800 border-blue-200";
+                icon = `<i class="fa-solid fa-circle-info text-blue-500"></i>`;
+            }
+
+            toast.className = `flex items-center gap-3 px-4 py-3 border rounded-xl shadow-lg text-xs font-semibold transform translate-y-2 opacity-0 transition-all duration-300 ${colorClass}`;
+            toast.innerHTML = `${icon} <span>${message}</span>`;
+            
+            portal.appendChild(toast);
+            
+            // Slide in animation
+            setTimeout(() => {
+                toast.classList.remove("translate-y-2", "opacity-0");
+            }, 10);
+
+            // Auto dismiss toast after 3.5 seconds
+            setTimeout(() => {
+                toast.classList.add("opacity-0", "translate-y-1");
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3500);
         }
 
         // Standard load callback hook
