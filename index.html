@@ -63,32 +63,38 @@
 
     <!-- Premium Header -->
     <header class="border-b border-sage-200 bg-white/80 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-sage-600 flex items-center justify-center text-white shadow-md shadow-sage-600/20">
-                    <i class="fa-solid fa-leaf text-lg"></i>
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-sage-600 flex items-center justify-center text-white shadow-md shadow-sage-600/20">
+                        <i class="fa-solid fa-leaf text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-base sm:text-lg font-bold tracking-tight text-sage-900 leading-tight">Sage Finance</h1>
+                        <p class="text-[10px] sm:text-xs text-sage-500 font-medium">Sleek Minimalist Financial Tracker</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="text-lg font-bold tracking-tight text-sage-900">Sage Finance</h1>
-                    <p class="text-xs text-sage-500 font-medium">Sleek Minimalist Financial Tracker</p>
-                </div>
+                <!-- Mini Sync Badge for mobile quick-read -->
+                <span id="sync-status-mobile" class="md:hidden w-3 h-3 rounded-full bg-orange-500 animate-pulse"></span>
             </div>
             
             <!-- Quick Actions & Status -->
-            <div class="flex items-center gap-2 flex-wrap justify-center">
+            <div class="flex items-center gap-2 w-full md:w-auto flex-wrap sm:flex-nowrap justify-center md:justify-end">
                 <!-- Sync Badge Indicator -->
-                <span id="sync-status" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange-100 text-orange-700 border border-orange-200 flex items-center gap-1.5 transition-all duration-300">
+                <span id="sync-status" class="hidden md:flex text-xs font-semibold px-2.5 py-1.5 rounded-full bg-orange-100 text-orange-700 border border-orange-200 items-center gap-1.5 transition-all duration-300">
                     <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
                     Lokal (Belum Sinkron)
                 </span>
                 
                 <!-- Main Sync Action Buttons -->
-                <button onclick="pullFromSheets()" class="text-xs font-semibold px-3 py-1.5 bg-white text-sage-700 hover:text-sage-900 border border-sage-200 hover:border-sage-300 rounded-lg shadow-sm transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-cloud-arrow-down text-sage-500"></i> Tarik Data
-                </button>
-                <button onclick="pushToSheets()" class="text-xs font-semibold px-3 py-1.5 bg-sage-600 hover:bg-sage-700 text-white rounded-lg shadow-sm hover:shadow-md transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> Kirim Data
-                </button>
+                <div class="grid grid-cols-2 gap-2 w-full sm:w-auto">
+                    <button onclick="pullFromSheets()" class="text-xs font-bold px-3 py-2.5 sm:py-1.5 bg-white text-sage-700 hover:text-sage-900 border border-sage-200 hover:border-sage-300 rounded-xl shadow-sm transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-cloud-arrow-down text-sage-500"></i> Tarik Data
+                    </button>
+                    <button onclick="pushToSheets()" class="text-xs font-bold px-3 py-2.5 sm:py-1.5 bg-sage-600 hover:bg-sage-700 text-white rounded-xl shadow-sm hover:shadow-md transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Kirim Data
+                    </button>
+                </div>
             </div>
         </div>
     </header>
@@ -111,10 +117,10 @@
                 <!-- Account List Card -->
                 <div class="space-y-4">
                     <!-- Cash Account Card -->
-                    <div class="p-3 bg-sage-50 rounded-xl border border-sage-100 relative group transition hover:border-sage-200">
+                    <div class="p-3.5 bg-sage-50 rounded-xl border border-sage-100 relative group transition hover:border-sage-200">
                         <div class="flex justify-between items-start mb-1">
                             <span class="text-xs font-bold text-sage-700">Cash / Dompet</span>
-                            <button onclick="openBudgetModal('Cash')" class="opacity-0 group-hover:opacity-100 text-[10px] text-sage-500 hover:text-sage-700 transition">
+                            <button onclick="openBudgetModal('Cash')" class="md:opacity-0 group-hover:opacity-100 text-[10px] text-sage-500 hover:text-sage-700 transition px-2 py-0.5 bg-white md:bg-transparent rounded border md:border-transparent">
                                 <i class="fa-solid fa-pen"></i> Atur
                             </button>
                         </div>
@@ -134,10 +140,10 @@
                     </div>
 
                     <!-- E-wallet Account Card -->
-                    <div class="p-3 bg-sage-50 rounded-xl border border-sage-100 relative group transition hover:border-sage-200">
+                    <div class="p-3.5 bg-sage-50 rounded-xl border border-sage-100 relative group transition hover:border-sage-200">
                         <div class="flex justify-between items-start mb-1">
                             <span class="text-xs font-bold text-sage-700">E-wallet (Gopay/OVO/Dana)</span>
-                            <button onclick="openBudgetModal('E-wallet')" class="opacity-0 group-hover:opacity-100 text-[10px] text-sage-500 hover:text-sage-700 transition">
+                            <button onclick="openBudgetModal('E-wallet')" class="md:opacity-0 group-hover:opacity-100 text-[10px] text-sage-500 hover:text-sage-700 transition px-2 py-0.5 bg-white md:bg-transparent rounded border md:border-transparent">
                                 <i class="fa-solid fa-pen"></i> Atur
                             </button>
                         </div>
@@ -157,10 +163,10 @@
                     </div>
 
                     <!-- Bank Account Card -->
-                    <div class="p-3 bg-sage-50 rounded-xl border border-sage-100 relative group transition hover:border-sage-200">
+                    <div class="p-3.5 bg-sage-50 rounded-xl border border-sage-100 relative group transition hover:border-sage-200">
                         <div class="flex justify-between items-start mb-1">
                             <span class="text-xs font-bold text-sage-700">Rekening Bank</span>
-                            <button onclick="openBudgetModal('Bank')" class="opacity-0 group-hover:opacity-100 text-[10px] text-sage-500 hover:text-sage-700 transition">
+                            <button onclick="openBudgetModal('Bank')" class="md:opacity-0 group-hover:opacity-100 text-[10px] text-sage-500 hover:text-sage-700 transition px-2 py-0.5 bg-white md:bg-transparent rounded border md:border-transparent">
                                 <i class="fa-solid fa-pen"></i> Atur
                             </button>
                         </div>
@@ -183,7 +189,7 @@
                 <!-- Summary Total Portofolio -->
                 <div class="mt-4 pt-4 border-t border-sage-100 flex justify-between items-center">
                     <span class="text-xs font-bold text-sage-500">Total Portofolio Keuangan:</span>
-                    <span class="text-sm font-extrabold text-sage-900 animate-pulse" id="total-portfolio-text">Rp 0</span>
+                    <span class="text-sm font-extrabold text-sage-900" id="total-portfolio-text">Rp 0</span>
                 </div>
             </div>
 
@@ -200,13 +206,13 @@
                         <label class="block text-[10px] font-bold text-sage-500 uppercase tracking-wider mb-1">Atur Batas Harian (Rp)</label>
                         <div class="relative flex items-center">
                             <span class="absolute left-2.5 text-xs font-bold text-sage-400">Rp</span>
-                            <input type="number" id="daily-budget-input" oninput="updateDailyBudget()" placeholder="Contoh: 50000" class="w-full text-xs pl-7 pr-2 py-1.5 bg-sage-50 rounded-lg border border-sage-200 focus:outline-none focus:ring-2 focus:ring-sage-500/20 focus:border-sage-500 transition text-sage-800 font-semibold font-mono">
+                            <input type="number" id="daily-budget-input" oninput="updateDailyBudget()" placeholder="Contoh: 50000" class="w-full text-xs pl-7 pr-2 py-2 bg-sage-50 rounded-lg border border-sage-200 focus:outline-none focus:ring-2 focus:ring-sage-500/20 focus:border-sage-500 transition text-sage-800 font-semibold font-mono">
                         </div>
                     </div>
                     
                     <div class="p-3 bg-sage-50 rounded-xl border border-sage-100 flex flex-col gap-1">
                         <div class="flex justify-between items-center text-[10px] font-bold text-sage-500 uppercase">
-                            <span>Hari Ini (Non-Wajib)</span>
+                            <span>Hari Ini</span>
                             <span id="daily-status-badge" class="text-sage-500 bg-sage-100 px-1.5 py-0.5 rounded font-bold">Belum Diatur ⚙️</span>
                         </div>
                         <div class="flex justify-between items-baseline mt-1">
@@ -219,7 +225,7 @@
                         </div>
                     </div>
                     <p class="text-[9px] text-sage-400 leading-normal italic">
-                        *Catatan: Pengeluaran rutin kategori <strong>Kuliah</strong> dan <strong>Kos/Bulanan</strong> otomatis dikecualikan agar tidak melanggar kalkulator harian Anda.
+                        *Catatan: Pengeluaran rutin kategori <strong>Kuliah</strong> dan <strong>Kos/Bulanan</strong> otomatis dikecualikan agar tidak mengganggu kalkulator harian Anda.
                     </p>
                 </div>
             </div>
@@ -329,14 +335,14 @@
         <section class="lg:col-span-8 bg-white rounded-2xl p-5 border border-sage-200 shadow-sm flex flex-col justify-between">
             <div>
                 <!-- Daily Warning Alert Banner (Hidden by default) -->
-                <div id="daily-warning-banner" class="hidden mb-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3 animate-pulse">
+                <div id="daily-warning-banner" class="hidden mb-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
                     <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0">
                         <i class="fa-solid fa-triangle-exclamation text-sm"></i>
                     </div>
                     <div>
                         <h4 class="text-xs font-bold text-red-800">⚠️ PERINGATAN: Budget Harian Terlampaui!</h4>
                         <p class="text-[11px] text-red-600 mt-0.5 leading-relaxed">
-                            Pengeluaran harian non-rutin Anda hari ini mencapai <strong id="warning-banner-spent">Rp 0</strong>, melebihi batas target budget harian Anda yaitu <strong id="warning-banner-limit">Rp 0</strong>. Segera rem pengeluaran Anda!
+                            Pengeluaran harian non-rutin Anda hari ini mencapai <strong id="warning-banner-spent">Rp 0</strong>, melebihi batas target harian Anda yaitu <strong id="warning-banner-limit">Rp 0</strong>. Segera rem pengeluaran Anda!
                         </p>
                     </div>
                 </div>
@@ -378,18 +384,22 @@
                     </div>
                 </div>
 
-                <!-- Ledger Table Panel -->
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                <!-- Ledger Table Panel with Mobile Swipe hint -->
+                <div class="text-[10px] text-sage-400 font-medium mb-1 md:hidden flex items-center gap-1.5 px-1">
+                    <i class="fa-solid fa-arrows-left-right animate-pulse"></i> Geser tabel ke samping untuk melihat detail penuh
+                </div>
+                
+                <div class="overflow-x-auto w-full border border-sage-100 rounded-xl">
+                    <table class="w-full text-left border-collapse min-w-[650px]">
                         <thead>
-                            <tr class="border-b border-sage-100 text-[10px] font-bold text-sage-400 uppercase tracking-wider">
-                                <th class="py-3 px-2 text-center w-12">Lunas</th>
-                                <th class="py-3 px-2 w-28">Tanggal</th>
-                                <th class="py-3 px-2">Keterangan</th>
-                                <th class="py-3 px-2 w-24 text-center">Akun</th>
-                                <th class="py-3 px-2 w-28 text-center">Kategori</th>
-                                <th class="py-3 px-2 w-32 text-right">Nominal</th>
-                                <th class="py-3 px-2 text-center w-10"></th>
+                            <tr class="border-b border-sage-100 text-[10px] font-bold text-sage-400 uppercase tracking-wider bg-sage-50/50">
+                                <th class="py-3 px-3 text-center w-12">Lunas</th>
+                                <th class="py-3 px-3 w-28">Tanggal</th>
+                                <th class="py-3 px-3">Keterangan</th>
+                                <th class="py-3 px-3 w-24 text-center">Akun</th>
+                                <th class="py-3 px-3 w-28 text-center">Kategori</th>
+                                <th class="py-3 px-3 w-32 text-right">Nominal</th>
+                                <th class="py-3 px-3 text-center w-12"></th>
                             </tr>
                         </thead>
                         <tbody id="ledger-body" class="divide-y divide-sage-50 text-xs">
@@ -403,7 +413,7 @@
                             <i class="fa-solid fa-folder-open text-2xl"></i>
                         </div>
                         <h3 class="font-bold text-sm text-sage-700">Data Masih Kosong</h3>
-                        <p class="text-xs text-sage-400 max-w-xs mx-auto mt-1">Belum ada transaksi terdaftar. Silakan masukkan transaksi pertama Anda menggunakan formulir di sebelah kiri!</p>
+                        <p class="text-xs text-sage-400 max-w-xs mx-auto mt-1 px-4">Belum ada transaksi terdaftar. Silakan masukkan transaksi pertama Anda menggunakan formulir di sebelah kiri!</p>
                     </div>
                 </div>
             </div>
@@ -413,9 +423,9 @@
                 <div class="text-[11px] font-semibold text-sage-500">
                     Menampilkan <span id="displayed-count">0</span> dari <span id="total-count">0</span> catatan pengeluaran
                 </div>
-                <div class="text-sm font-bold text-sage-900 flex items-center gap-2">
-                    <span>Total Pengeluaran Bulan Ini:</span>
-                    <span id="grand-total-spent" class="text-red-600">Rp 0</span>
+                <div class="text-sm font-bold text-sage-900 flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                    <span class="text-xs sm:text-sm">Total Pengeluaran Bulan Ini:</span>
+                    <span id="grand-total-spent" class="text-rose-600">Rp 0</span>
                 </div>
             </div>
         </section>
@@ -465,6 +475,19 @@
             const savedTx = localStorage.getItem("sage_transactions");
             if (savedTx) {
                 transactions = JSON.parse(savedTx);
+                
+                // DATA FALLBACK CONVERSION:
+                // Mengonversi otomatis jika pengguna memiliki data lawas dengan label "BNI"
+                let updated = false;
+                transactions.forEach(t => {
+                    if (t.account === "BNI") {
+                        t.account = "Bank";
+                        updated = true;
+                    }
+                });
+                if (updated) {
+                    localStorage.setItem("sage_transactions", JSON.stringify(transactions));
+                }
             } else {
                 transactions = []; // Ensure empty array if not defined
             }
@@ -472,7 +495,20 @@
             // Load budgets from localStorage
             const savedBudgets = localStorage.getItem("sage_budgets");
             if (savedBudgets) {
-                budgets = JSON.parse(savedBudgets);
+                const parsedBudgets = JSON.parse(savedBudgets);
+                
+                // DATA FALLBACK CONVERSION:
+                // Ambil sisa anggaran lama berlabel BNI, pindahkan ke "Bank"
+                if (parsedBudgets["BNI"] !== undefined) {
+                    budgets["Bank"] = parsedBudgets["BNI"];
+                    delete parsedBudgets["BNI"];
+                }
+                
+                budgets["Cash"] = parsedBudgets["Cash"] || 0;
+                budgets["E-wallet"] = parsedBudgets["E-wallet"] || 0;
+                budgets["Bank"] = parsedBudgets["Bank"] || budgets["Bank"] || 0;
+                
+                localStorage.setItem("sage_budgets", JSON.stringify(budgets));
             } else {
                 budgets = { "Cash": 0, "E-wallet": 0, "Bank": 0 }; // Ensure zero state initially
             }
@@ -514,8 +550,8 @@
             if (confirm("Apakah Anda yakin ingin menghapus semua data transaksi dan anggaran dari penyimpanan browser?")) {
                 transactions = [];
                 budgets = { "Cash": 0, "E-wallet": 0, "Bank": 0 };
-                localStorage.removeItem("sage_transactions");
-                localStorage.removeItem("sage_budgets");
+                localStorage.setItem("sage_transactions", JSON.stringify(transactions));
+                localStorage.setItem("sage_budgets", JSON.stringify(budgets));
                 localStorage.removeItem("sage_daily_budget");
                 document.getElementById("daily-budget-input").value = "";
                 renderTable();
@@ -558,20 +594,37 @@
         // Sync State Badge Interface Builder
         function updateSyncBadge(state, message) {
             const statusEl = document.getElementById("sync-status");
+            const mobileDot = document.getElementById("sync-status-mobile");
+            
+            // Sync status on mobile
+            if (mobileDot) {
+                if (state === "success") {
+                    mobileDot.className = "md:hidden w-3 h-3 rounded-full bg-emerald-500";
+                } else if (state === "syncing") {
+                    mobileDot.className = "md:hidden w-3 h-3 rounded-full bg-blue-500 animate-ping";
+                } else if (state === "error") {
+                    mobileDot.className = "md:hidden w-3 h-3 rounded-full bg-red-500";
+                } else {
+                    mobileDot.className = "md:hidden w-3 h-3 rounded-full bg-orange-500 animate-pulse";
+                }
+            }
+
+            if (!statusEl) return;
+            
             if (state === "offline") {
-                statusEl.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-orange-100 text-orange-700 border border-orange-200 flex items-center gap-1.5";
+                statusEl.className = "hidden md:flex text-xs font-semibold px-2.5 py-1.5 rounded-full bg-orange-100 text-orange-700 border border-orange-200 items-center gap-1.5";
                 statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-orange-500"></span> ${message}`;
             } else if (state === "syncing") {
-                statusEl.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 border border-blue-200 flex items-center gap-1.5 animate-pulse";
+                statusEl.className = "hidden md:flex text-xs font-semibold px-2.5 py-1.5 rounded-full bg-blue-100 text-blue-700 border border-blue-200 items-center gap-1.5 animate-pulse";
                 statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-500 animate-spin"></span> Menyinkronkan...`;
             } else if (state === "success") {
-                statusEl.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center gap-1.5";
+                statusEl.className = "hidden md:flex text-xs font-semibold px-2.5 py-1.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 items-center gap-1.5";
                 statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> ${message}`;
             } else if (state === "error") {
-                statusEl.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-red-100 text-red-700 border border-red-200 flex items-center gap-1.5";
+                statusEl.className = "hidden md:flex text-xs font-semibold px-2.5 py-1.5 rounded-full bg-red-100 text-red-700 border border-red-200 items-center gap-1.5";
                 statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500"></span> ${message}`;
             } else {
-                statusEl.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-sage-100 text-sage-700 border border-sage-200 flex items-center gap-1.5";
+                statusEl.className = "hidden md:flex text-xs font-semibold px-2.5 py-1.5 rounded-full bg-sage-100 text-sage-700 border border-sage-200 items-center gap-1.5";
                 statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-sage-500"></span> ${message}`;
             }
         }
@@ -640,12 +693,21 @@
                     let hasChanges = false;
                     
                     if (data.budgets) {
+                        // Safe conversion again during fetch mapping
+                        if (data.budgets["BNI"] !== undefined) {
+                            data.budgets["Bank"] = data.budgets["BNI"];
+                            delete data.budgets["BNI"];
+                        }
                         budgets = data.budgets;
                         localStorage.setItem("sage_budgets", JSON.stringify(budgets));
                         hasChanges = true;
                     }
                     if (data.transactions) {
                         transactions = data.transactions;
+                        // Map internal elements
+                        transactions.forEach(t => {
+                            if (t.account === "BNI") t.account = "Bank";
+                        });
                         localStorage.setItem("sage_transactions", JSON.stringify(transactions));
                         hasChanges = true;
                     }
@@ -714,7 +776,7 @@
                 }
             });
 
-            document.getElementById("daily-spent-text").innerText = formatRupiah(dailySpent);
+            document.getElementById("daily-spent-text").innerHTML = formatRupiah(dailySpent);
 
             const badge = document.getElementById("daily-status-badge");
             const dailyProgress = document.getElementById("daily-progress");
@@ -730,8 +792,8 @@
                     badge.className = "text-red-600 bg-red-50 px-1.5 py-0.5 rounded font-bold animate-pulse";
                     
                     // Show warning banner
-                    document.getElementById("warning-banner-spent").innerText = formatRupiah(dailySpent);
-                    document.getElementById("warning-banner-limit").innerText = formatRupiah(dailyBudgetLimit);
+                    document.getElementById("warning-banner-spent").innerHTML = formatRupiah(dailySpent);
+                    document.getElementById("warning-banner-limit").innerHTML = formatRupiah(dailyBudgetLimit);
                     warningBanner.classList.remove("hidden");
                 } else if (percent >= 80) {
                     dailyProgress.className = "bg-amber-500 h-full transition-all duration-300";
@@ -761,6 +823,7 @@
             const ledgerBody = document.getElementById("ledger-body");
             const emptyState = document.getElementById("empty-state");
             
+            if (!ledgerBody) return; // Prevent crashes if elements render out of order
             ledgerBody.innerHTML = "";
 
             // Calculate spent amount dynamically based on Category/Account parameters
@@ -769,11 +832,16 @@
             let totalSpentAll = 0;
 
             transactions.forEach(t => {
-                spentCountMap[t.account] += t.nominal;
+                // Defensive mapping in case old account formats slipped through
+                const safeAccount = (t.account === "BNI" ? "Bank" : t.account);
+                
+                if (spentCountMap[safeAccount] !== undefined) {
+                    spentCountMap[safeAccount] += t.nominal;
+                }
                 totalSpentAll += t.nominal;
 
-                // Fitler Criteria Engine matching
-                const matchesAcc = (filterAcc === "ALL" || t.account === filterAcc);
+                // Filter Criteria Engine matching
+                const matchesAcc = (filterAcc === "ALL" || safeAccount === filterAcc);
                 const matchesCat = (filterCat === "ALL" || t.category === filterCat);
                 const matchesStatus = (filterStatus === "ALL" || 
                                        (filterStatus === "Lunas" && t.checked) || 
@@ -784,13 +852,13 @@
                 }
             });
 
-            // Update Budget Info & Cards (Shows both Spent & Sisa)
-            updateAccountCard("Cash", budgets["Cash"], spentCountMap["Cash"]);
-            updateAccountCard("E-wallet", budgets["E-wallet"], spentCountMap["E-wallet"]);
-            updateAccountCard("Bank", budgets["Bank"], spentCountMap["Bank"]);
+            // Update Budget Info & Cards (Shows both Spent & Sisa) Safely
+            updateAccountCard("Cash", budgets["Cash"] || 0, spentCountMap["Cash"] || 0);
+            updateAccountCard("E-wallet", budgets["E-wallet"] || 0, spentCountMap["E-wallet"] || 0);
+            updateAccountCard("Bank", budgets["Bank"] || 0, spentCountMap["Bank"] || 0);
 
-            const totalPortfolio = budgets["Cash"] + budgets["E-wallet"] + budgets["Bank"];
-            document.getElementById("total-portfolio-text").innerText = formatRupiah(totalPortfolio);
+            const totalPortfolio = (budgets["Cash"] || 0) + (budgets["E-wallet"] || 0) + (budgets["Bank"] || 0);
+            document.getElementById("total-portfolio-text").innerHTML = formatRupiah(totalPortfolio);
 
             // Populate Rows
             if (filteredTransactions.length === 0) {
@@ -798,24 +866,26 @@
             } else {
                 emptyState.classList.add("hidden");
                 filteredTransactions.forEach((t) => {
+                    const safeAccount = (t.account === "BNI" ? "Bank" : t.account);
                     const tr = document.createElement("tr");
                     tr.className = `border-b border-sage-50 transition hover:bg-sage-50/50 ${t.checked ? "text-sage-400 bg-sage-50/20" : ""}`;
                     
+                    // break-words whitespace-normal ensures long descriptions wrap gracefully
                     tr.innerHTML = `
-                        <td class="py-3 px-2 text-center">
-                            <input type="checkbox" ${t.checked ? "checked" : ""} onchange="toggleChecked(${t.id})" class="w-4 h-4 rounded border-sage-300 text-sage-600 focus:ring-sage-500 cursor-pointer">
+                        <td class="py-4 px-3 text-center">
+                            <input type="checkbox" ${t.checked ? "checked" : ""} onchange="toggleChecked(${t.id})" class="w-5 h-5 sm:w-4 sm:h-4 rounded border-sage-300 text-sage-600 focus:ring-sage-500 cursor-pointer accent-sage-600">
                         </td>
-                        <td class="py-3 px-2 text-sage-500 font-semibold text-[11px]">${formatDate(t.date)}</td>
-                        <td class="py-3 px-2 font-medium ${t.checked ? "line-through" : "text-sage-900"}">${t.detail}</td>
-                        <td class="py-3 px-2 text-center">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${getAccountLabelClass(t.account)}">${t.account}</span>
+                        <td class="py-4 px-3 text-sage-500 font-semibold text-[11px]">${formatDate(t.date)}</td>
+                        <td class="py-4 px-3 font-medium break-words whitespace-normal max-w-[180px] sm:max-w-[260px] ${t.checked ? "line-through text-sage-400" : "text-sage-900"}">${t.detail}</td>
+                        <td class="py-4 px-3 text-center">
+                            <span class="px-2.5 py-1 sm:py-0.5 rounded text-[10px] font-bold ${getAccountLabelClass(safeAccount)}">${safeAccount}</span>
                         </td>
-                        <td class="py-3 px-2 text-center">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-sage-100 text-sage-700">${t.category}</span>
+                        <td class="py-4 px-3 text-center">
+                            <span class="px-2.5 py-1 sm:py-0.5 rounded text-[10px] font-medium bg-sage-100 text-sage-700">${t.category}</span>
                         </td>
-                        <td class="py-3 px-2 text-right font-bold text-sage-900 ${t.checked ? "text-sage-400 line-through" : ""}">${formatRupiah(t.nominal)}</td>
-                        <td class="py-3 px-2 text-center">
-                            <button onclick="deleteTransaction(${t.id})" class="text-sage-400 hover:text-red-500 transition text-[11px]">
+                        <td class="py-4 px-3 text-right font-bold text-sage-900 ${t.checked ? "text-sage-400 line-through" : ""}">${formatRupiah(t.nominal)}</td>
+                        <td class="py-4 px-3 text-center">
+                            <button onclick="deleteTransaction(${t.id})" class="text-sage-400 hover:text-red-500 transition text-[13px] sm:text-[11px] p-2">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </td>
@@ -827,7 +897,7 @@
             // Summary Info Section update values
             document.getElementById("displayed-count").innerText = filteredTransactions.length;
             document.getElementById("total-count").innerText = transactions.length;
-            document.getElementById("grand-total-spent").innerText = formatRupiah(totalSpentAll);
+            document.getElementById("grand-total-spent").innerHTML = formatRupiah(totalSpentAll);
 
             // Re-calculate the daily budget metrics on table redraw
             calculateDailyBudgetStats();
@@ -836,19 +906,25 @@
         // Card rendering optimization parameters helper
         function updateAccountCard(accId, target, spent) {
             const keyPrefix = accId.toLowerCase().replace("-", "");
-            document.getElementById(`${keyPrefix}-budget-text`).innerText = formatRupiah(target);
-            document.getElementById(`${keyPrefix}-spent-text`).innerText = formatRupiah(spent);
+            
+            const targetEl = document.getElementById(`${keyPrefix}-budget-text`);
+            const spentEl = document.getElementById(`${keyPrefix}-spent-text`);
+            const sisaEl = document.getElementById(`${keyPrefix}-sisa-text`);
+            const percentEl = document.getElementById(`${keyPrefix}-percent-text`);
+            const progressEl = document.getElementById(`${keyPrefix}-progress`);
+
+            if (targetEl) targetEl.innerHTML = formatRupiah(target);
+            if (spentEl) spentEl.innerHTML = formatRupiah(spent);
             
             // Sisa Budget calculation
             const sisa = target - spent;
-            const sisaTextEl = document.getElementById(`${keyPrefix}-sisa-text`);
-            sisaTextEl.innerText = formatRupiah(sisa);
-            
-            // Change color dynamically based on budget state
-            if (sisa < 0) {
-                sisaTextEl.className = "text-red-600 font-extrabold";
-            } else {
-                sisaTextEl.className = "text-emerald-600 font-extrabold";
+            if (sisaEl) {
+                sisaEl.innerHTML = formatRupiah(sisa);
+                if (sisa < 0) {
+                    sisaEl.className = "text-red-600 font-extrabold";
+                } else {
+                    sisaEl.className = "text-emerald-600 font-extrabold";
+                }
             }
             
             // Calculate Percent ratio
@@ -857,18 +933,18 @@
                 percent = Math.min(100, Math.round((spent / target) * 100));
             }
             
-            document.getElementById(`${keyPrefix}-percent-text`).innerText = `${percent}%`;
+            if (percentEl) percentEl.innerText = `${percent}%`;
             
-            const progressEl = document.getElementById(`${keyPrefix}-progress`);
-            progressEl.style.width = `${percent}%`;
-
-            // Style progress color dynamically
-            if (percent >= 90) {
-                progressEl.className = "bg-red-500 h-full transition-all duration-500";
-            } else if (percent >= 75) {
-                progressEl.className = "bg-amber-500 h-full transition-all duration-500";
-            } else {
-                progressEl.className = "bg-sage-600 h-full transition-all duration-500";
+            if (progressEl) {
+                progressEl.style.width = `${percent}%`;
+                // Style progress color dynamically
+                if (percent >= 90) {
+                    progressEl.className = "bg-red-500 h-full transition-all duration-500";
+                } else if (percent >= 75) {
+                    progressEl.className = "bg-amber-500 h-full transition-all duration-500";
+                } else {
+                    progressEl.className = "bg-sage-600 h-full transition-all duration-500";
+                }
             }
         }
 
@@ -997,10 +1073,15 @@
 
         // Helpers for styling formats
         function formatRupiah(num) {
-            return "Rp " + num.toLocaleString("id-ID");
+            // SAFE CHECK: Mencegah kegagalan runtime (crash) jika parameter kosong
+            if (num === undefined || num === null || isNaN(num)) {
+                num = 0;
+            }
+            return "Rp\u00A0\u00A0\u00A0" + num.toLocaleString("id-ID");
         }
 
         function formatDate(dateStr) {
+            if (!dateStr) return "";
             const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
             const parts = dateStr.split("-");
             if (parts.length === 3) {
@@ -1015,6 +1096,7 @@
         // Animated Sleek Toast Creator
         function showToast(message, type = "success") {
             const portal = document.getElementById("toast-portal");
+            if (!portal) return;
             const toast = document.createElement("div");
             
             let colorClass = "bg-white text-sage-800 border-sage-200";
