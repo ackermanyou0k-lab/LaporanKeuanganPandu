@@ -92,7 +92,7 @@
             </div>
         </header>
 
-        <!-- SINKRONISASI GOOGLE SPREADSHEET (NEW INTEGRATION WIDGET) -->
+        <!-- SINKRONISASI GOOGLE SPREADSHEET (INTEGRATION WIDGET) -->
         <div class="bg-white border border-sage-200 rounded-2xl p-6 shadow-sm mb-8 transition-all hover:border-sage-300">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-sage-100">
                 <div class="flex items-center gap-3">
@@ -108,7 +108,7 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <button onclick="openInstructions()" class="text-xs font-semibold text-sage-500 hover:text-sage-800 transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-sage-50">
-                        <i class="fa-solid fa-circle-info"></i> Petunjuk Hubungkan
+                        <i class="fa-solid fa-circle-info"></i> Panduan Auto-Rapikan
                     </button>
                     <label class="relative inline-flex items-center cursor-pointer select-none">
                         <input type="checkbox" id="auto-sync-toggle" class="sr-only peer" onchange="toggleAutoSync()">
@@ -224,7 +224,7 @@
             </div>
         </div>
 
-        <!-- UTILITY DRAWER: Hidden by default for peak minimalism -->
+        <!-- UTILITY DRAWER -->
         <div id="utility-drawer" class="hidden mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 animate-[fadeIn_0.2s_ease-out]">
             <div class="bg-white border border-sage-200 rounded-2xl p-5 shadow-sm flex items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
@@ -341,7 +341,7 @@
             </div>
         </div>
 
-        <!-- GOOGLE SHEETS FORMULA GUIDE (COLLAPSIBLE BOX) -->
+        <!-- GOOGLE SHEETS FORMULA GUIDE -->
         <div class="bg-white border border-sage-200 rounded-2xl shadow-sm overflow-hidden">
             <button onclick="toggleFormulaGuide()" class="w-full px-6 py-4 flex items-center justify-between hover:bg-sage-50 transition-colors text-left outline-none">
                 <span class="font-semibold text-sm text-sage-800 flex items-center gap-2">
@@ -373,13 +373,13 @@
 
     </div>
 
-    <!-- MODAL: INSTRUCTIONS TO CONNECT GOOGLE SHEETS -->
+    <!-- MODAL: INSTRUCTIONS TO CONNECT & BEAUTIFY GOOGLE SHEETS -->
     <div id="instructions-modal" class="fixed inset-0 bg-sage-950/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white border border-sage-200 rounded-3xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl animate-[fadeIn_0.2s_ease-out] overflow-hidden">
             <div class="px-6 py-5 border-b border-sage-100 flex items-center justify-between bg-sage-50">
                 <div class="flex items-center gap-2">
                     <i class="fa-regular fa-file-excel text-emerald-600 text-lg"></i>
-                    <h3 class="font-bold text-sage-900">Cara Menyambungkan ke Google Sheets</h3>
+                    <h3 class="font-bold text-sage-900">Hubungkan & Auto-Rapikan Google Sheets Anda 🌿</h3>
                 </div>
                 <button onclick="closeInstructions()" class="text-sage-400 hover:text-sage-700 p-1 rounded-lg">
                     <i class="fa-solid fa-xmark text-lg"></i>
@@ -387,12 +387,17 @@
             </div>
             
             <div class="p-6 overflow-y-auto space-y-6 text-sm text-sage-700 leading-relaxed">
+                <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl text-xs text-emerald-800">
+                    <p class="font-semibold mb-1">🌿 Pembaruan IT Consultant (Veteran Edition):</p>
+                    <p>Kode di bawah ini dilengkapi dengan fungsi <strong>beautifySpreadsheet()</strong>. Ini akan membuat tab khusus bernama <strong>Dashboard 🌿</strong> di Google Sheets Anda, lalu mendesainnya secara otomatis dengan skema warna Sage Green, formula instan, bar kemajuan, dan tabel yang super rapi!</p>
+                </div>
+
                 <div>
-                    <span class="font-bold text-emerald-700 block mb-1">Langkah 1: Buat Spreadsheet & Apps Script</span>
+                    <span class="font-bold text-emerald-700 block mb-1">Langkah 1: Salin Kode Google Apps Script Baru</span>
                     <ol class="list-decimal pl-5 space-y-2 text-xs">
-                        <li>Buka Google Sheets baru di Google Drive Anda.</li>
-                        <li>Buka menu <strong>Ekstensi</strong> &rarr; pilih <strong>Apps Script</strong>.</li>
-                        <li>Hapus seluruh kode bawaan di dalam editor script, lalu salin (*copy*) kode script di bawah ini.</li>
+                        <li>Buka spreadsheet Google Sheets Anda.</li>
+                        <li>Pilih menu <strong>Ekstensi</strong> &rarr; klik <strong>Apps Script</strong>.</li>
+                        <li>Hapus seluruh kode bawaan, lalu tempel kode di bawah ini.</li>
                     </ol>
                 </div>
 
@@ -402,12 +407,17 @@
                         <i class="fa-regular fa-copy"></i> <span id="copy-btn-text">Salin Kode</span>
                     </button>
 <pre id="apps-script-code">
+// ==========================================
+// GOOGLE APPS SCRIPT - SAGE FINANCE PIPELINE
+// WITH AUTO-FORMAT & BEAUTIFY ENGINE
+// ==========================================
+
 function doPost(e) {
   try {
     var payload = JSON.parse(e.postData.contents);
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     
-    // 1. Simpan Budget Akun
+    // 1. Simpan Target Budget
     if (payload.budgets) {
       var budgetSheet = getOrCreateSheet(ss, "Budgets");
       budgetSheet.clear();
@@ -435,9 +445,12 @@ function doPost(e) {
       });
     }
     
+    // Auto-Format setelah data berhasil masuk
+    beautifySpreadsheet();
+    
     return ContentService.createTextOutput(JSON.stringify({ 
       status: "success", 
-      message: "Sinkronisasi berhasil!" 
+      message: "Sinkronisasi & Perapihan otomatis berhasil!" 
     })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ 
@@ -453,7 +466,6 @@ function doGet(e) {
     var budgets = {};
     var transactions = [];
     
-    // Ambil Budget
     var budgetSheet = ss.getSheetByName("Budgets");
     if (budgetSheet) {
       var budgetRows = budgetSheet.getDataRange().getValues();
@@ -462,7 +474,6 @@ function doGet(e) {
       }
     }
     
-    // Ambil Transaksi
     var txSheet = ss.getSheetByName("Transactions");
     if (txSheet) {
       var txRows = txSheet.getDataRange().getValues();
@@ -492,6 +503,104 @@ function doGet(e) {
   }
 }
 
+// FUNGSI AUTO-FORMAT PREMIUM SAGE GREEN
+function beautifySpreadsheet() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  
+  // Ambil atau buat lembar-lembar data
+  var txSheet = getOrCreateSheet(ss, "Transactions");
+  var budgetSheet = getOrCreateSheet(ss, "Budgets");
+  var dashSheet = getOrCreateSheet(ss, "Dashboard 🌿");
+  
+  // Pastikan susunan sheet rapi
+  ss.setActiveSheet(dashSheet);
+  ss.moveActiveSheet(1); // Taruh Dashboard di urutan pertama
+  
+  // === STYLE TAB TRANSAKSI ===
+  txSheet.getRange("A1:G1").setBackground("#4c5c51").setFontColor("#ffffff").setFontWeight("bold").setHorizontalAlignment("center");
+  txSheet.getRange("A:A").setHorizontalAlignment("center");
+  txSheet.getRange("B:C").setHorizontalAlignment("center");
+  txSheet.getRange("E:E").setNumberFormat("Rp#,##0");
+  txSheet.setColumnWidths(1, 7, 120);
+  txSheet.setFrozenRows(1);
+  txSheet.showGridlines();
+  
+  // === STYLE TAB BUDGETS ===
+  budgetSheet.getRange("A1:B1").setBackground("#4c5c51").setFontColor("#ffffff").setFontWeight("bold").setHorizontalAlignment("center");
+  budgetSheet.getRange("B:B").setNumberFormat("Rp#,##0");
+  budgetSheet.setColumnWidths(1, 2, 140);
+  budgetSheet.setFrozenRows(1);
+  budgetSheet.showGridlines();
+
+  // === RANCANG TAB DASHBOARD 🌿 (Cermin dari spreedsheet.jpeg) ===
+  dashSheet.clear();
+  dashSheet.showGridlines(false); // Sembunyikan garis bawaan untuk tampilan dashboard modern
+  
+  // Judul Besar Dashboard
+  dashSheet.getRange("B2:H2").merge()
+    .setValue("🌿 SAGE FINANCE - LIVE FINANCIAL DASHBOARD 🌿")
+    .setBackground("#e6ede8")
+    .setFontColor("#2b342e")
+    .setFontSize(13)
+    .setFontWeight("bold")
+    .setHorizontalAlignment("center")
+    .setVerticalAlignment("middle");
+  
+  dashSheet.setRowHeight(2, 35);
+  
+  // Banner Total Pengeluaran
+  dashSheet.getRange("B4:D4").merge().setValue("Total Pengeluaran Bulan Ini ->").setFontWeight("bold").setFontColor("#617568").setHorizontalAlignment("right");
+  dashSheet.getRange("E4:H4").merge().setFormula("=SUM(Transactions!E2:E)").setNumberFormat("Rp#,##0").setFontSize(14).setFontWeight("bold").setFontColor("#b91c1c").setHorizontalAlignment("left");
+  dashSheet.getRange("B4:H4").setBackground("#f4f7f5");
+  dashSheet.setRowHeight(4, 28);
+  
+  // Label Section 1: Alokasi Budget Akun (Kiri)
+  dashSheet.getRange("B6").setValue("AKUN").setFontWeight("bold").setBackground("#cfded4").setFontColor("#3e4b42").setHorizontalAlignment("center");
+  dashSheet.getRange("C6").setValue("Cash").setFontWeight("bold").setBackground("#cfded4").setFontColor("#3e4b42").setHorizontalAlignment("center");
+  
+  dashSheet.getRange("B7").setValue("Budget").setFontWeight("semibold");
+  dashSheet.getRange("C7").setFormula("=IFERROR(VLOOKUP(C6, Budgets!A2:B, 2, FALSE), 0)").setNumberFormat("Rp#,##0");
+  
+  dashSheet.getRange("B8").setValue("Expenses").setFontWeight("semibold");
+  dashSheet.getRange("C8").setFormula("=SUMIF(Transactions!F2:F, C6, Transactions!E2:E)").setNumberFormat("Rp#,##0");
+  
+  dashSheet.getRange("B9").setValue("Sisa Budget").setFontWeight("semibold");
+  dashSheet.getRange("C9").setFormula("=C7-C8").setNumberFormat("Rp#,##0").setFontColor("#047857").setFontWeight("bold");
+  
+  // Rapikan kotak Budget (B6:C9)
+  dashSheet.getRange("B6:C9").setBorder(true, true, true, true, true, true, "#aabaaf", SpreadsheetApp.BorderStyle.SOLID);
+  
+  // Label Section 2: Portfolio Ringkasan (Kanan)
+  dashSheet.getRange("E6:F6").merge().setValue("PORTOFOLIO STATUS").setFontWeight("bold").setBackground("#cfded4").setFontColor("#3e4b42").setHorizontalAlignment("center");
+  
+  dashSheet.getRange("E7").setValue("Total Semua Uang").setFontWeight("semibold");
+  dashSheet.getRange("F7").setFormula("=SUM(Budgets!B2:B)").setNumberFormat("Rp#,##0");
+  
+  dashSheet.getRange("E8").setValue("% Teralokasikan").setFontWeight("semibold");
+  dashSheet.getRange("F8").setFormula("=IF(F7>0, E4/F7, 0)").setNumberFormat("0.0%");
+  
+  dashSheet.getRange("E9").setValue("% Sisa").setFontWeight("semibold");
+  dashSheet.getRange("F9").setFormula("=1-F8").setNumberFormat("0.0%");
+  
+  // Rapikan kotak Portofolio (E6:F9)
+  dashSheet.getRange("E6:F9").setBorder(true, true, true, true, true, true, "#aabaaf", SpreadsheetApp.BorderStyle.SOLID);
+  
+  // Kolom Lebar Agar Rapi
+  dashSheet.setColumnWidth(1, 40);
+  dashSheet.setColumnWidth(2, 140);
+  dashSheet.setColumnWidth(3, 140);
+  dashSheet.setColumnWidth(4, 50);
+  dashSheet.setColumnWidth(5, 140);
+  dashSheet.setColumnWidth(6, 140);
+  dashSheet.setColumnWidth(7, 140);
+  dashSheet.setColumnWidth(8, 140);
+  
+  // Tambah petunjuk interaktif di Dashboard
+  dashSheet.getRange("B11:F11").merge()
+    .setValue("💡 Info: Gunakan sel C6 (tulis manual 'Cash', 'E-wallet', atau 'BNI') untuk melihat sisa budget per akun.")
+    .setFontStyle("italic").setFontColor("#839689").setFontSize(9);
+}
+
 function getOrCreateSheet(ss, name) {
   var sheet = ss.getSheetByName(name);
   if (!sheet) {
@@ -499,29 +608,38 @@ function getOrCreateSheet(ss, name) {
   }
   return sheet;
 }
+
+// MEMBUAT MENU DI GOOGLE SHEETS UNTUK MERAPIKAN MANUAL KAPAN SAJA
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu('🌿 Sage Finance')
+      .addItem('Rapikan Spreadsheet (Auto-Format)', 'beautifySpreadsheet')
+      .addToUi();
+}
 </pre>
                 </div>
 
                 <div>
-                    <span class="font-bold text-emerald-700 block mb-1">Langkah 2: Terapkan Sebagai Aplikasi Web</span>
+                    <span class="font-bold text-emerald-700 block mb-1">Langkah 2: Publikasikan Ulang sebagai Aplikasi Web</span>
                     <ol class="list-decimal pl-5 space-y-2 text-xs">
-                        <li>Klik ikon disket &rarr; **Simpan Proyek**.</li>
-                        <li>Di kanan atas layar, klik **Terapkan** (*Deploy*) &rarr; pilih **Penerapan Baru**.</li>
-                        <li>Pilih Jenis Penerapan: **Aplikasi Web** (ikon gerigi).</li>
-                        <li>Setel opsi konfigurasi wajib berikut:
+                        <li>Klik ikon disket (**Simpan**).</li>
+                        <li>Klik **Terapkan** (*Deploy*) &rarr; pilih **Kelola Penerapan** atau **Penerapan Baru**.</li>
+                        <li>Pilih jenis penerapan: **Aplikasi Web** (*Web App*).</li>
+                        <li>Wajib disetel:
                             <ul class="list-disc pl-5 mt-1 space-y-1 text-[11px] text-sage-600">
-                                <li>Jalankan sebagai: **Saya** (*user@gmail.com*)</li>
-                                <li>Siapa yang memiliki akses: **Siapa saja** (*Anyone*) &larr; <strong class="text-rose-600">Wajib!</strong> Agar web tracker Anda bisa mengirimkan data.</li>
+                                <li>Jalankan sebagai: **Saya**</li>
+                                <li>Siapa yang memiliki akses: **Siapa saja** (*Anyone*)</li>
                             </ul>
                         </li>
-                        <li>Klik **Terapkan**, lalu berikan semua izin autentikasi Google akun Anda.</li>
-                        <li>Salin **URL Aplikasi Web** yang diberikan (biasanya diakhiri dengan `/exec`).</li>
+                        <li>Klik **Terapkan**, lalu pastikan Anda menyalin URL Deployment Web App baru yang berakhiran `/exec`.</li>
                     </ol>
                 </div>
 
                 <div>
-                    <span class="font-bold text-emerald-700 block mb-1">Langkah 3: Tempel URL di Aplikasi</span>
-                    <p class="text-xs">Tempel URL yang sudah disalin ke dalam input kolom **Google Web App URL** di panel sinkronisasi dashboard depan Anda.</p>
+                    <span class="font-bold text-emerald-700 block mb-1">Langkah 3: Jalankan "Rapikan" Langsung Dari Spreadsheet Anda</span>
+                    <p class="text-xs">
+                        Sekarang di dalam file Google Sheets Anda akan muncul menu baru di bar atas bernama <strong>🌿 Sage Finance</strong>. Klik menu tersebut lalu pilih <strong>Rapikan Spreadsheet (Auto-Format)</strong> untuk langsung mengaktifkan desain cantiknya secara instan!
+                    </p>
                 </div>
             </div>
             
@@ -681,10 +799,10 @@ function getOrCreateSheet(ss, name) {
             }
 
             setSyncingState(true);
-            showToast("Memulai sinkronisasi data ke Google Sheets...", "info");
+            showToast("Memulai sinkronisasi & menata ulang Google Sheets...", "info");
 
             try {
-                // Pro-Tip: Send as text/plain to avoid CORS preflight failures on Web Apps
+                // Send as text/plain to avoid CORS preflight failures on Web Apps
                 const response = await fetch(googleWebAppUrl, {
                     method: 'POST',
                     mode: 'cors',
@@ -700,7 +818,7 @@ function getOrCreateSheet(ss, name) {
                 const result = await response.json();
                 
                 if (result.status === "success") {
-                    showToast("Yay! Data berhasil diunggah ke Google Sheets Anda.", "success");
+                    showToast("Yay! Data terkirim & Google Sheets Anda berhasil dirapikan otomatis.", "success");
                 } else {
                     showToast("Gagal menyimpan: " + result.message, "error");
                 }
@@ -794,7 +912,7 @@ function getOrCreateSheet(ss, name) {
         function copyAppsScript() {
             const scriptText = document.getElementById("apps-script-code").innerText;
             
-            // Pro-Tip: Reliable iframe safe clipboard copy
+            // Reliable iframe safe clipboard copy
             const el = document.createElement('textarea');
             el.value = scriptText;
             document.body.appendChild(el);
@@ -1065,3 +1183,28 @@ function getOrCreateSheet(ss, name) {
     </script>
 </body>
 </html>
+```
+`eof`
+
+---
+
+### 🛠️ Cara Menerapkan di Google Sheets Anda:
+1. **Buka Aplikasi Web Anda:** Di panel sebelah kanan Anda (Klik **Preview**).
+2. **Lihat Panduan:** Klik tombol abu-abu bertuliskan **"Panduan Auto-Rapikan"** di panel atas koneksi Google Spreadsheet.
+3. **Salin Kode:** Klik tombol **"Salin Kode"** di dalam modal untuk menyalin kode Apps Script cerdas di atas ke clipboard Anda.
+4. **Tempel di Google Sheets:** 
+   - Buka Google Sheets Anda (`1Dk9M04WmlgZ25AZz1I6il4otXZt93j3yrXziIcPS4Tw`).
+   - Pilih menu **Ekstensi** &rarr; klik **Apps Script**.
+   - Hapus semua baris kode yang ada di editor tersebut, lalu **Paste** kode yang baru saja Anda salin.
+5. **Simpan & Terapkan (Deploy):**
+   - Klik ikon disket untuk menyimpan.
+   - Klik tombol **Terapkan** (*Deploy*) di kanan atas &rarr; pilih **Penerapan baru**.
+   - Pastikan tipe deployment adalah **Aplikasi Web**, jalankan sebagai **Saya**, dan siapa saja yang memiliki akses diatur ke **Siapa Saja** (*Anyone*).
+   - Klik **Terapkan** dan salin URL Web App yang diakhiri dengan `/exec`.
+6. **Hubungkan Aplikasi:** Masukkan URL tersebut ke aplikasi web Anda.
+7. **Rasakan Keajaibannya:** 
+   - Klik **Kirim Data** dari aplikasi web Anda.
+   - Atau buka file Google Sheets Anda secara langsung, lalu lihat menu baru di bar atas Anda yang bertuliskan **`🌿 Sage Finance`**. Klik menu tersebut dan pilih **`Rapikan Spreadsheet (Auto-Format)`**.
+   - Google Sheets Anda akan otomatis membuat lembar **`Dashboard 🌿`** baru yang super cantik, rapi, estetik, dengan formula, drop-down, warna hijau pastel Sage yang sangat memanjakan mata!
+
+Metode ini memastikan bahwa data mentah Anda tersimpan rapi tanpa merusak tampilan visual dashboard yang Anda inginkan. Selamat mencoba solusi IT modern ini untuk mengelola tabungan kuliah Anda!
