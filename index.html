@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sage - Minimalist Budget Tracker</title>
+    <title>Laporan Keuangan Bulanan</title>
     <!-- Fonts: Inter for premium, clean sans-serif aesthetic -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,6 +41,10 @@
     <style>
         body {
             background-color: #f4f7f5;
+            background-image:
+                radial-gradient(circle at top left, rgba(97,117,104,0.05), transparent 28%),
+                radial-gradient(circle at top right, rgba(130,150,137,0.045), transparent 24%),
+                linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0));
         }
         /* Custom scrollbar style for sleek feel */
         ::-webkit-scrollbar {
@@ -57,6 +61,61 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #aabaaf;
         }
+
+        /* Premium UI polish without changing the overall style */
+        .finance-card {
+            transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+        }
+        .finance-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(26, 32, 28, 0.06);
+        }
+        .insight-item {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            font-size: clamp(11px, 0.95vw, 13px);
+            line-height: 1.5;
+        }
+        .insight-list {
+            display: grid;
+            gap: 0.5rem;
+        }
+        .insight-item strong {
+            font-weight: 700;
+            color: #1a201c;
+        }
+        .finance-card {
+            min-width: 0;
+        }
+        .auto-fit-value {
+            font-size: clamp(0.95rem, 1.8vw, 1.45rem);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            text-wrap: balance;
+        }
+        .insight-copy {
+            display: block;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            text-wrap: balance;
+            line-height: 1.55;
+            font-size: clamp(0.82rem, 1.35vw, 0.97rem);
+        }
+        .insight-item {
+            min-width: 0;
+            min-height: 4.6rem;
+        }
+        .insight-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .metric-chip {
+            white-space: normal;
+            line-height: 1.2;
+        }
     </style>
 </head>
 <body class="text-sage-800 antialiased font-sans min-h-screen pb-12">
@@ -70,8 +129,8 @@
                         <i class="fa-solid fa-leaf text-lg"></i>
                     </div>
                     <div>
-                        <h1 class="text-base sm:text-lg font-bold tracking-tight text-sage-900 leading-tight">Sage Finance</h1>
-                        <p class="text-[10px] sm:text-xs text-sage-500 font-medium">Sleek Minimalist Financial Tracker</p>
+                        <h1 class="text-base sm:text-lg font-bold tracking-tight text-sage-900 leading-tight">Laporan Keuangan Bulanan</h1>
+                        <p class="text-[10px] sm:text-xs text-sage-500 font-medium">Ringkasan pemasukan, pengeluaran, dan tabungan secara profesional.</p>
                     </div>
                 </div>
                 <!-- Mini Sync Badge for mobile quick-read -->
@@ -86,7 +145,11 @@
                     Lokal (Belum Sinkron)
                 </span>
                 
-                <!-- Main Sync Action Buttons -->
+                                <span id="live-clock" class="hidden md:flex text-xs font-semibold px-2.5 py-1.5 rounded-full bg-sage-50 text-sage-700 border border-sage-200 items-center gap-1.5">
+                    <i class="fa-regular fa-clock text-sage-500"></i>
+                    <span>--:--:--</span>
+                </span>
+<!-- Main Sync Action Buttons -->
                 <div class="grid grid-cols-2 gap-2 w-full sm:w-auto">
                     <button onclick="pullFromSheets()" class="text-xs font-bold px-3 py-2.5 sm:py-1.5 bg-white text-sage-700 hover:text-sage-900 border border-sage-200 hover:border-sage-300 rounded-xl shadow-sm transition flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-cloud-arrow-down text-sage-500"></i> Tarik Data
@@ -106,7 +169,7 @@
         <section class="lg:col-span-4 space-y-6">
             
             <!-- Account Budget Section -->
-            <div class="bg-white rounded-2xl p-5 border border-sage-200 shadow-sm">
+            <div class="bg-white rounded-2xl p-5 border border-sage-200 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
                 <div class="flex items-center justify-between mb-4 pb-2 border-b border-sage-100">
                     <h2 class="font-bold text-sm tracking-wide text-sage-900 uppercase flex items-center gap-2">
                         <i class="fa-solid fa-wallet text-sage-500"></i> Alokasi Anggaran
@@ -194,7 +257,7 @@
             </div>
 
             <!-- Batas Budget Harian Section -->
-            <div class="bg-white rounded-2xl p-5 border border-sage-200 shadow-sm">
+            <div class="bg-white rounded-2xl p-5 border border-sage-200 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
                 <div class="flex items-center justify-between mb-4 pb-2 border-b border-sage-100">
                     <h2 class="font-bold text-sm tracking-wide text-sage-900 uppercase flex items-center gap-2">
                         <i class="fa-solid fa-calendar-day text-sage-500"></i> Batas Budget Harian
@@ -231,7 +294,7 @@
             </div>
 
             <!-- Quick Record Form -->
-            <div class="bg-white rounded-2xl p-5 border border-sage-200 shadow-sm">
+            <div class="bg-white rounded-2xl p-5 border border-sage-200 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
                 <h2 class="font-bold text-sm tracking-wide text-sage-900 uppercase flex items-center gap-2 mb-4 pb-2 border-b border-sage-100">
                     <i class="fa-solid fa-circle-plus text-sage-500"></i> Catat Transaksi Baru
                 </h2>
@@ -251,6 +314,14 @@
                             <label class="block text-[10px] font-bold text-sage-500 uppercase tracking-wider mb-1">Tanggal</label>
                             <input type="date" id="new-date" required class="w-full text-xs px-3 py-2 bg-sage-50 rounded-lg border border-sage-200 focus:outline-none focus:ring-2 focus:ring-sage-500/20 focus:border-sage-500 transition text-sage-800">
                         </div>
+                    </div>
+                         <div>
+                            <label class="block text-[10px] font-bold text-sage-500 uppercase tracking-wider mb-1">Pilihan</label>
+                            <select id="new-update" class="w-full text-xs px-2 py-2 bg-sage-50 rounded-lg border border-sage-200 focus:outline-none focus:ring-2 focus:ring-sage-500/20 focus:border-sage-500 transition text-sage-800">
+                            <option value="Pengeluaran">Pengeluaran</option>
+                            <option value="Pemasukan">Pemasukan</option>
+                            <option value="Tabungan">Tabungan</option>
+                        </select>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
@@ -282,7 +353,7 @@
             </div>
 
             <!-- Google Sheets Connection Setup Card -->
-            <div class="bg-white rounded-2xl p-5 border border-sage-200 shadow-sm">
+            <div class="bg-white rounded-2xl p-5 border border-sage-200 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
                 <button onclick="toggleCollapse('connection-panel')" class="w-full flex items-center justify-between font-bold text-sm tracking-wide text-sage-900 uppercase pb-2 border-b border-sage-100">
                     <span class="flex items-center gap-2"><i class="fa-solid fa-plug text-sage-500"></i> Pengaturan Spreadsheet</span>
                     <i id="connection-panel-icon" class="fa-solid fa-chevron-down text-sage-400 text-xs transition-transform duration-300"></i>
@@ -353,11 +424,17 @@
                         <h2 class="font-bold text-sm tracking-wide text-sage-900 uppercase flex items-center gap-2">
                             <i class="fa-solid fa-list-check text-sage-500"></i> Buku Transaksi & Tagihan
                         </h2>
-                        <p class="text-[11px] text-sage-500 font-medium">Atur dan pantau pengeluaran Anda secara berkala</p>
+                        <p class="text-[11px] text-sage-500 font-medium">Pantau arus kas, pemasukan, pengeluaran, dan tabungan dalam satu tampilan.</p>
                     </div>
                     
                     <!-- Integrated Filtering System -->
                     <div class="flex flex-wrap items-center gap-2">
+                         <select id="filter-update" onchange="renderTable()" class="text-xs px-2.5 py-1.5 bg-sage-50 border border-sage-200 rounded-lg text-sage-700 focus:outline-none focus:border-sage-500">
+                            <option value="ALL">Semua Pilihan</option>
+                            <option value="Pengeluaran">Pengeluaran</option>
+                            <option value="Pemasukan">Pemasukan</option>
+                            <option value="Tabungan">Tabungan</option>
+                         </select>
                         <select id="filter-account" onchange="renderTable()" class="text-xs px-2.5 py-1.5 bg-sage-50 border border-sage-200 rounded-lg text-sage-700 focus:outline-none focus:border-sage-500">
                             <option value="ALL">Semua Akun</option>
                             <option value="Cash">Cash</option>
@@ -378,25 +455,149 @@
                             <option value="Lunas">Lunas</option>
                             <option value="Belum">Belum Lunas</option>
                         </select>
+                        <select id="filter-month" onchange="renderTable()" class="text-xs px-2.5 py-1.5 bg-sage-50 border border-sage-200 rounded-lg text-sage-700 focus:outline-none focus:border-sage-500">
+                            <option value="ALL">Semua Bulan</option>
+                            <option value="1">Januari</option>
+                            <option value="2">Februari</option>
+                            <option value="3">Maret</option>
+                            <option value="4">April</option>
+                            <option value="5">Mei</option>
+                            <option value="6">Juni</option>
+                            <option value="7">Juli</option>
+                            <option value="8">Agustus</option>
+                            <option value="9">September</option>
+                            <option value="10">Oktober</option>
+                            <option value="11">November</option>
+                            <option value="12">Desember</option>
+                        </select>
+                        <select id="filter-year" onchange="renderTable()" class="text-xs px-2.5 py-1.5 bg-sage-50 border border-sage-200 rounded-lg text-sage-700 focus:outline-none focus:border-sage-500">
+                            <option value="ALL">Semua Tahun</option>
+                        </select>
                         <button onclick="clearAllData()" class="text-xs font-semibold px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 rounded-lg transition flex items-center gap-1">
                             <i class="fa-solid fa-trash-can text-[10px]"></i> Kosongkan
                         </button>
                     </div>
                 </div>
 
+
+                <!-- Financial Summary Strip -->
+                <div class="grid grid-cols-2 xl:grid-cols-4 gap-3 mb-4">
+                    <div class="finance-card relative overflow-hidden p-3 rounded-xl border border-sage-100 bg-sage-50/80 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"><div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-sage-500/40 via-sage-200/70 to-sage-500/40"></div>
+                        <p class="text-[10px] uppercase tracking-wider text-sage-500 font-bold">Total Pengeluaran</p>
+                        <div id="grand-total-spent" class="text-base font-extrabold text-rose-600 mt-1">Rp 0</div>
+                    </div>
+                    <div class="finance-card relative overflow-hidden p-3 rounded-xl border border-sage-100 bg-sage-50/80 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"><div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-sage-500/40 via-sage-200/70 to-sage-500/40"></div>
+                        <p class="text-[10px] uppercase tracking-wider text-sage-500 font-bold">Total Pemasukan</p>
+                        <div id="grand-total-income" class="text-base font-extrabold text-emerald-600 mt-1">Rp 0</div>
+                    </div>
+                    <div class="finance-card relative overflow-hidden p-3 rounded-xl border border-sage-100 bg-sage-50/80 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"><div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-sage-500/40 via-sage-200/70 to-sage-500/40"></div>
+                        <p class="text-[10px] uppercase tracking-wider text-sage-500 font-bold">Total Tabungan</p>
+                        <div id="grand-total-saving" class="text-base font-extrabold text-sky-600 mt-1">Rp 0</div>
+                    </div>
+                    <div class="finance-card relative overflow-hidden p-3 rounded-xl border border-sage-100 bg-sage-50/80 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"><div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-sage-500/40 via-sage-200/70 to-sage-500/40"></div>
+                        <p class="text-[10px] uppercase tracking-wider text-sage-500 font-bold">Saldo Bersih</p>
+                        <div id="grand-total-net" class="text-base font-extrabold text-sage-900 mt-1">Rp 0</div>
+                    </div>
+                </div>
+
+                <!-- Finance Intelligence Panel -->
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-3 mb-4">
+                    <div class="finance-card relative overflow-hidden xl:col-span-1 p-4 rounded-2xl border border-sage-100 bg-sage-50/80 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 h-full flex flex-col"><div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sage-500/70 via-sage-300/70 to-sage-500/70"></div>
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <p class="text-[10px] uppercase tracking-wider text-sage-500 font-bold">Financial Health</p>
+                                <div id="finance-health-score" class="auto-fit-value font-extrabold text-sage-900 mt-1">0/100</div>
+                            </div>
+                            <span id="finance-health-status" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-sage-100 text-sage-700 border border-sage-200">Belum Ada Data</span>
+                        </div>
+                        <div class="mt-3 space-y-2">
+                            <div>
+                                <div class="flex justify-between text-[10px] font-semibold text-sage-500 mb-1">
+                                    <span>Rasio Tabungan</span>
+                                    <span id="finance-savings-rate">0%</span>
+                                </div>
+                                <div class="w-full h-2 rounded-full bg-sage-200 overflow-hidden">
+                                    <div id="finance-health-bar" class="h-full w-0 transition-all duration-500 bg-sage-600"></div>
+                                </div>
+                            </div>
+                            <p id="finance-health-note" class="insight-copy text-sage-500 leading-relaxed">
+                                Ringkasan performa keuangan bulan ini akan tampil di sini.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="finance-card relative overflow-hidden xl:col-span-1 p-4 rounded-2xl border border-sage-100 bg-sage-50/80 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 h-full flex flex-col"><div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sage-500/70 via-sage-300/70 to-sage-500/70"></div>
+                        <div class="flex items-center justify-between gap-3"><p class="text-[10px] uppercase tracking-wider text-sage-500 font-bold">Cash Flow Bulanan</p><span id="period-label" class="text-[10px] font-bold text-sage-500 bg-white/70 border border-sage-100 rounded-full px-2 py-1 metric-chip">Semua Periode</span></div>
+                        <div class="mt-3 grid grid-cols-1 gap-2 text-xs auto-fit-grid">
+                            <div class="finance-card relative overflow-hidden rounded-xl bg-white border border-sage-100 p-3 min-h-[92px] flex flex-col justify-between"><div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-sage-500/30 via-sage-200/60 to-sage-500/30"></div>
+                                <p class="text-[10px] uppercase tracking-wider text-sage-500 font-bold">Bersih</p>
+                                <div id="finance-net-cashflow" class="auto-fit-value font-extrabold text-sage-900 mt-1 auto-fit-value">Rp 0</div>
+                            </div>
+                            <div class="finance-card relative overflow-hidden rounded-xl bg-white border border-sage-100 p-3 min-h-[92px] flex flex-col justify-between"><div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-sage-500/30 via-sage-200/60 to-sage-500/30"></div>
+                                <p class="text-[10px] uppercase tracking-wider text-sage-500 font-bold">Rasio Pengeluaran</p>
+                                <div id="finance-expense-ratio" class="auto-fit-value font-extrabold text-rose-600 mt-1 auto-fit-value">0%</div>
+                            </div>
+                            <div class="finance-card relative overflow-hidden rounded-xl bg-white border border-sage-100 p-3 min-h-[92px] flex flex-col justify-between"><div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-sage-500/30 via-sage-200/60 to-sage-500/30"></div>
+                                <p class="text-[10px] uppercase tracking-wider text-sage-500 font-bold">Kategori Teratas</p>
+                                <div id="finance-top-category" class="auto-fit-value font-bold text-sage-900 mt-1 auto-fit-value">-</div>
+                            </div>
+                            <div class="finance-card relative overflow-hidden rounded-xl bg-white border border-sage-100 p-3 min-h-[92px] flex flex-col justify-between"><div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-sage-500/30 via-sage-200/60 to-sage-500/30"></div>
+                                <p class="text-[10px] uppercase tracking-wider text-sage-500 font-bold">Akun Aktif</p>
+                                <div id="finance-top-account" class="auto-fit-value font-bold text-sage-900 mt-1 auto-fit-value">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="finance-card relative overflow-hidden xl:col-span-1 p-4 rounded-2xl border border-sage-100 bg-sage-50/80 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 h-full flex flex-col"><div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sage-500/70 via-sage-300/70 to-sage-500/70"></div>
+                        <p class="text-[10px] uppercase tracking-wider text-sage-500 font-bold">Smart Insights</p>
+                        <ul id="smart-insights-list" class="insight-list mt-3 text-sage-600">
+                            <li class="finance-card relative overflow-hidden rounded-xl bg-white border border-sage-100 p-3 min-h-[92px] flex flex-col justify-between">Belum ada data untuk dianalisis.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Export & Backup Controls -->
+                <div class="mb-4 rounded-2xl border border-sage-100 bg-sage-50/70 p-4 shadow-sm">
+                    <div class="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between mb-3">
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-sage-500 font-bold">Export & Backup</p>
+                            <p class="text-xs text-sage-500 report-card-subtle">Unduh laporan, simpan salinan cadangan, atau pulihkan data kapan saja.</p>
+                        </div>
+                        <span id="backup-status" class="text-[10px] font-bold text-sage-500 bg-white/80 border border-sage-100 rounded-full px-2 py-1 metric-chip">Backup belum dibuat</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                        <button onclick="exportCurrentReportPDF()" class="action-btn w-full text-xs font-semibold py-2.5 bg-sage-600 hover:bg-sage-700 text-white rounded-xl shadow-sm hover:shadow transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-pdf text-[10px]"></i> Export PDF
+                        </button>
+                        <button onclick="exportCurrentReportCSV()" class="action-btn w-full text-xs font-semibold py-2.5 bg-white hover:bg-sage-50 text-sage-700 border border-sage-200 rounded-xl shadow-sm hover:shadow transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-csv text-sage-500 text-[10px]"></i> Export Excel
+                        </button>
+                        <button onclick="downloadBackupJSON()" class="action-btn w-full text-xs font-semibold py-2.5 bg-white hover:bg-sage-50 text-sage-700 border border-sage-200 rounded-xl shadow-sm hover:shadow transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-shield-halved text-sage-500 text-[10px]"></i> Backup Data
+                        </button>
+                        <button onclick="triggerRestorePicker()" class="action-btn w-full text-xs font-semibold py-2.5 bg-white hover:bg-sage-50 text-sage-700 border border-sage-200 rounded-xl shadow-sm hover:shadow transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-cloud-arrow-up text-sage-500 text-[10px]"></i> Pulihkan
+                        </button>
+                    </div>
+                    <input id="restore-file-input" type="file" accept=".json,application/json" class="hidden" onchange="restoreBackupFile(event)">
+                </div>
+
                 <!-- Ledger Table Panel with Mobile Swipe hint -->
+
                 <div class="text-[10px] text-sage-400 font-medium mb-1 md:hidden flex items-center gap-1.5 px-1">
                     <i class="fa-solid fa-arrows-left-right animate-pulse"></i> Geser tabel ke samping untuk melihat detail penuh
                 </div>
                 
                 <div class="overflow-x-auto w-full border border-sage-100 rounded-xl">
-                    <table class="w-full text-left border-collapse min-w-[650px]">
+                    <table class="w-full text-left border-collapse min-w-[760px]">
                         <thead>
                             <tr class="border-b border-sage-100 text-[10px] font-bold text-sage-400 uppercase tracking-wider bg-sage-50/50">
                                 <th class="py-3 px-3 text-center w-12">Lunas</th>
                                 <th class="py-3 px-3 w-28">Tanggal</th>
+                                <th class="py-3 px-3 w-24 text-center">Waktu</th>
                                 <th class="py-3 px-3">Keterangan</th>
                                 <th class="py-3 px-3 w-24 text-center">Akun</th>
+                                <th class="py-3 px-3 w-28 text-center">Jenis</th>
                                 <th class="py-3 px-3 w-28 text-center">Kategori</th>
                                 <th class="py-3 px-3 w-32 text-right">Nominal</th>
                                 <th class="py-3 px-3 text-center w-12"></th>
@@ -419,13 +620,13 @@
             </div>
 
             <!-- Footer Pagination Summary Info -->
-            <div class="mt-6 pt-4 border-t border-sage-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="mt-6 pt-4 border-t border-sage-100 flex flex-col gap-3">
                 <div class="text-[11px] font-semibold text-sage-500">
-                    Menampilkan <span id="displayed-count">0</span> dari <span id="total-count">0</span> catatan pengeluaran
+                    Menampilkan <span id="displayed-count">0</span> dari <span id="total-count">0</span> catatan transaksi
                 </div>
-                <div class="text-sm font-bold text-sage-900 flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
-                    <span class="text-xs sm:text-sm">Total Pengeluaran Bulan Ini:</span>
-                    <span id="grand-total-spent" class="text-rose-600">Rp 0</span>
+                <div class="text-[10px] text-sage-400 flex items-center justify-between gap-2">
+                    <span>Data tersimpan lokal, siap disinkronkan, dan dioptimalkan untuk pembacaan cepat.</span>
+                    <span id="footer-clock" class="font-semibold text-sage-600"></span>
                 </div>
             </div>
         </section>
@@ -469,82 +670,204 @@
         };
         let isAutoSyncEnabled = false;
 
+        const MONTH_LABELS = {
+            1: "Januari",
+            2: "Februari",
+            3: "Maret",
+            4: "April",
+            5: "Mei",
+            6: "Juni",
+            7: "Juli",
+            8: "Agustus",
+            9: "September",
+            10: "Oktober",
+            11: "November",
+            12: "Desember"
+        };
+
+        function getNowParts() {
+            const now = new Date();
+            const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+            return { now, date, time };
+        }
+
+        function getTimestampValue(tx) {
+            if (tx && tx.timestamp) {
+                const d = new Date(tx.timestamp);
+                if (!isNaN(d)) return d;
+            }
+            const date = tx && tx.date ? tx.date : "1970-01-01";
+            const time = tx && tx.time ? tx.time : "00:00:00";
+            const d = new Date(`${date}T${time}`);
+            if (!isNaN(d)) return d;
+            return new Date(0);
+        }
+
+        function formatTimeFromTimestamp(timestamp) {
+            if (!timestamp) return "";
+            const d = new Date(timestamp);
+            if (isNaN(d)) return "";
+            return d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+        }
+
+        function sortTransactionsNewestFirst() {
+            transactions.sort((a, b) => getTimestampValue(b) - getTimestampValue(a));
+        }
+
+        function getTransactionDateParts(tx) {
+            const dateStr = (tx && tx.date) ? String(tx.date) : "";
+            const parts = dateStr.split("-");
+            const year = parts.length === 3 ? Number(parts[0]) : null;
+            const month = parts.length === 3 ? Number(parts[1]) : null;
+            return { year, month };
+        }
+
+        function populateYearFilter() {
+            const yearSelect = document.getElementById("filter-year");
+            if (!yearSelect) return;
+
+            const currentYear = new Date().getFullYear();
+            const years = new Set([currentYear]);
+            (transactions || []).forEach(tx => {
+                const { year } = getTransactionDateParts(normalizeTransaction(tx));
+                if (year && !Number.isNaN(year)) years.add(year);
+            });
+
+            const selected = yearSelect.value || "ALL";
+            const sortedYears = Array.from(years).filter(Boolean).sort((a, b) => b - a);
+            yearSelect.innerHTML = `<option value="ALL">Semua Tahun</option>` +
+                sortedYears.map(y => `<option value="${y}">${y}</option>`).join("");
+            if ([...sortedYears.map(String), "ALL"].includes(selected)) {
+                yearSelect.value = selected;
+            }
+        }
+
+        function updatePeriodLabel(monthValue, yearValue) {
+            const title = document.getElementById("period-label");
+            if (!title) return;
+            if (monthValue === "ALL" && yearValue === "ALL") {
+                title.textContent = "Semua Periode";
+                return;
+            }
+            const monthText = monthValue === "ALL" ? "Semua Bulan" : MONTH_LABELS[Number(monthValue)] || "Bulan";
+            const yearText = yearValue === "ALL" ? "Semua Tahun" : yearValue;
+            title.textContent = `${monthText} ${yearText}`.trim();
+        }
+
+        function updateLiveClock() {
+            const { now } = getNowParts();
+            const display = now.toLocaleString("id-ID", {
+                weekday: "short",
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: false
+            });
+
+            const liveClock = document.getElementById("live-clock");
+            if (liveClock) {
+                liveClock.innerHTML = `<i class="fa-regular fa-clock text-sage-500"></i><span>${display}</span>`;
+            }
+
+            const footerClock = document.getElementById("footer-clock");
+            if (footerClock) {
+                footerClock.textContent = now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+            }
+        }
+
+
         // Initialize state, load permanent browser storage, and pull from sheets if available
         function init() {
-            // Load transactions from localStorage
             const savedTx = localStorage.getItem("sage_transactions");
             if (savedTx) {
-                transactions = JSON.parse(savedTx);
-                
-                // DATA FALLBACK CONVERSION:
-                // Mengonversi otomatis jika pengguna memiliki data lawas dengan label "BNI"
+                try {
+                    transactions = JSON.parse(savedTx).map(normalizeTransaction);
+                } catch (e) {
+                    transactions = [];
+                }
+
                 let updated = false;
                 transactions.forEach(t => {
                     if (t.account === "BNI") {
                         t.account = "Bank";
                         updated = true;
                     }
+                    if (!t.update) {
+                        t.update = "Pengeluaran";
+                        updated = true;
+                    }
+                    t.nominal = Number(t.nominal) || 0;
+                    t.detail = String(t.detail || "").trim();
+                    t.category = t.category || "Lainnya";
+                    if (!t.timestamp) {
+                        t.timestamp = `${t.date || "1970-01-01"}T${t.time || "00:00:00"}`;
+                        updated = true;
+                    }
+                    if (!t.time) {
+                        t.time = formatTimeFromTimestamp(t.timestamp) || "00:00:00";
+                        updated = true;
+                    }
                 });
+
                 if (updated) {
                     localStorage.setItem("sage_transactions", JSON.stringify(transactions));
                 }
+
+                sortTransactionsNewestFirst();
             } else {
-                transactions = []; // Ensure empty array if not defined
+                transactions = [];
             }
 
-            // Load budgets from localStorage
             const savedBudgets = localStorage.getItem("sage_budgets");
             if (savedBudgets) {
                 const parsedBudgets = JSON.parse(savedBudgets);
-                
-                // DATA FALLBACK CONVERSION:
-                // Ambil sisa anggaran lama berlabel BNI, pindahkan ke "Bank"
+
                 if (parsedBudgets["BNI"] !== undefined) {
                     budgets["Bank"] = parsedBudgets["BNI"];
                     delete parsedBudgets["BNI"];
                 }
-                
-                budgets["Cash"] = parsedBudgets["Cash"] || 0;
-                budgets["E-wallet"] = parsedBudgets["E-wallet"] || 0;
-                budgets["Bank"] = parsedBudgets["Bank"] || budgets["Bank"] || 0;
-                
+
+                budgets["Cash"] = Number(parsedBudgets["Cash"]) || 0;
+                budgets["E-wallet"] = Number(parsedBudgets["E-wallet"]) || 0;
+                budgets["Bank"] = Number(parsedBudgets["Bank"]) || budgets["Bank"] || 0;
+
                 localStorage.setItem("sage_budgets", JSON.stringify(budgets));
             } else {
-                budgets = { "Cash": 0, "E-wallet": 0, "Bank": 0 }; // Ensure zero state initially
+                budgets = { "Cash": 0, "E-wallet": 0, "Bank": 0 };
             }
 
-            // Load Daily Budget Limit
             const savedDailyBudget = localStorage.getItem("sage_daily_budget");
             if (savedDailyBudget) {
                 document.getElementById("daily-budget-input").value = savedDailyBudget;
             }
 
-            // Load API Web-app URL
             const savedApiUrl = localStorage.getItem("sage_gas_url");
             if (savedApiUrl) {
                 document.getElementById("api-url").value = savedApiUrl;
                 updateSyncBadge("cloud", "Koneksi Tersedia");
-                
-                // Auto load cloud data at startup if URL exists
-                pullFromSheets(true); // Silent mode on load
+                pullFromSheets(true);
             } else {
                 updateSyncBadge("offline", "Lokal (Belum Sinkron)");
             }
 
-            // Load Autosync preference
             const savedAutoSync = localStorage.getItem("sage_autosync");
             if (savedAutoSync === "true") {
                 isAutoSyncEnabled = true;
                 document.getElementById("auto-sync").checked = true;
             }
 
-            // Set current date input default values
             document.getElementById('new-date').valueAsDate = new Date();
-
-            // Refresh Interface Layout
+            document.getElementById("new-update").value = "Pengeluaran";
+            updateLiveClock();
+            populateYearFilter();
             renderTable();
         }
 
+        // Complete Reset Option
         // Complete Reset Option
         function clearAllData() {
             if (confirm("Apakah Anda yakin ingin menghapus semua data transaksi dan anggaran dari penyimpanan browser?")) {
@@ -554,6 +877,7 @@
                 localStorage.setItem("sage_budgets", JSON.stringify(budgets));
                 localStorage.removeItem("sage_daily_budget");
                 document.getElementById("daily-budget-input").value = "";
+                populateYearFilter();
                 renderTable();
                 showToast("Penyimpanan lokal berhasil dikosongkan.");
                 triggerAutoSync();
@@ -638,6 +962,32 @@
             }
         }
 
+
+        function getTransactionEffect(updateType) {
+            const type = updateType || "Pengeluaran";
+            if (type === "Pemasukan" || type === "Tabungan") return 1;
+            return -1;
+        }
+
+        function normalizeTransaction(tx) {
+            if (!tx || typeof tx !== "object") return tx;
+            const normalizedDate = tx.date || "";
+            const normalizedTime = tx.time || (tx.timestamp ? formatTimeFromTimestamp(tx.timestamp) : "");
+            const normalizedTimestamp = tx.timestamp || (normalizedDate ? `${normalizedDate}T${normalizedTime || "00:00:00"}` : "");
+            return {
+                id: tx.id ?? Date.now(),
+                checked: Boolean(tx.checked),
+                date: normalizedDate,
+                time: normalizedTime,
+                timestamp: normalizedTimestamp,
+                update: tx.update || "Pengeluaran",
+                detail: String(tx.detail || "").trim(),
+                nominal: Number(tx.nominal) || 0,
+                account: (tx.account === "BNI" ? "Bank" : tx.account) || "Cash",
+                category: tx.category || "Lainnya"
+            };
+        }
+
         // PUSH DATA: Send to Google Spreadsheet (CORS Safe)
         function pushToSheets(isSilent = false) {
             const apiUrl = localStorage.getItem("sage_gas_url");
@@ -703,15 +1053,13 @@
                         hasChanges = true;
                     }
                     if (data.transactions) {
-                        transactions = data.transactions;
-                        // Map internal elements
-                        transactions.forEach(t => {
-                            if (t.account === "BNI") t.account = "Bank";
-                        });
+                        transactions = data.transactions.map(normalizeTransaction);
+                        sortTransactionsNewestFirst();
                         localStorage.setItem("sage_transactions", JSON.stringify(transactions));
                         hasChanges = true;
                     }
                     
+                    populateYearFilter();
                     renderTable();
                     updateSyncBadge("success", "Data Ter-sinkron");
                     if (!isSilent) showToast("Data terbaru berhasil diunduh dari Google Sheets!");
@@ -757,11 +1105,11 @@
             calculateDailyBudgetStats();
         }
 
+
         // Calculate Daily budget and trigger alerts (Excludes Kos/Bulanan and Kuliah)
         function calculateDailyBudgetStats() {
             const dailyBudgetLimit = parseFloat(localStorage.getItem("sage_daily_budget")) || 0;
-            
-            // Get today's local date string YYYY-MM-DD
+
             const d = new Date();
             const year = d.getFullYear();
             const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -770,9 +1118,15 @@
 
             let dailySpent = 0;
             transactions.forEach(t => {
-                // EXCLUDE 'Kuliah' (UKT) and 'Kos/Bulanan' from the daily spend calculation
-                if (t.date === todayStr && t.category !== "Kuliah" && t.category !== "Kos/Bulanan") {
-                    dailySpent += t.nominal;
+                const updateType = t.update || "Pengeluaran";
+                const amount = Number(t.nominal) || 0;
+                if (
+                    updateType === "Pengeluaran" &&
+                    t.date === todayStr &&
+                    t.category !== "Kuliah" &&
+                    t.category !== "Kos/Bulanan"
+                ) {
+                    dailySpent += amount;
                 }
             });
 
@@ -790,8 +1144,6 @@
                     dailyProgress.className = "bg-red-500 h-full transition-all duration-300";
                     badge.innerText = "Melebihi Limit! ⚠️";
                     badge.className = "text-red-600 bg-red-50 px-1.5 py-0.5 rounded font-bold animate-pulse";
-                    
-                    // Show warning banner
                     document.getElementById("warning-banner-spent").innerHTML = formatRupiah(dailySpent);
                     document.getElementById("warning-banner-limit").innerHTML = formatRupiah(dailyBudgetLimit);
                     warningBanner.classList.remove("hidden");
@@ -814,76 +1166,153 @@
             }
         }
 
+
         // Render Ledger Dashboard Engine
         function renderTable() {
+            const filterUp = document.getElementById("filter-update").value;
             const filterAcc = document.getElementById("filter-account").value;
             const filterCat = document.getElementById("filter-category").value;
             const filterStatus = document.getElementById("filter-status").value;
+            const filterMonth = document.getElementById("filter-month") ? document.getElementById("filter-month").value : "ALL";
+            const filterYear = document.getElementById("filter-year") ? document.getElementById("filter-year").value : "ALL";
+            updatePeriodLabel(filterMonth, filterYear);
 
             const ledgerBody = document.getElementById("ledger-body");
             const emptyState = document.getElementById("empty-state");
-            
-            if (!ledgerBody) return; // Prevent crashes if elements render out of order
+
+            if (!ledgerBody) return;
             ledgerBody.innerHTML = "";
 
-            // Calculate spent amount dynamically based on Category/Account parameters
-            let spentCountMap = { "Cash": 0, "E-wallet": 0, "Bank": 0 };
+            const expenseMap = {
+                "Cash": 0,
+                "E-wallet": 0,
+                "Bank": 0
+            };
+
+            const balanceMap = {
+                "Cash": Number(budgets["Cash"]) || 0,
+                "E-wallet": Number(budgets["E-wallet"]) || 0,
+                "Bank": Number(budgets["Bank"]) || 0
+            };
+
             let filteredTransactions = [];
             let totalSpentAll = 0;
+            let totalIncomeAll = 0;
+            let totalSavingAll = 0;
 
-            transactions.forEach(t => {
-                // Defensive mapping in case old account formats slipped through
+            const normalizedTransactions = (transactions || []).map(normalizeTransaction);
+
+            const periodTransactions = normalizedTransactions.filter((tx) => {
+                const { month, year } = getTransactionDateParts(tx);
+                const monthOk = (filterMonth === "ALL" || String(month) === String(filterMonth));
+                const yearOk = (filterYear === "ALL" || String(year) === String(filterYear));
+                return monthOk && yearOk;
+            });
+
+            periodTransactions.forEach((rawTx) => {
+                const t = normalizeTransaction(rawTx);
                 const safeAccount = (t.account === "BNI" ? "Bank" : t.account);
-                
-                if (spentCountMap[safeAccount] !== undefined) {
-                    spentCountMap[safeAccount] += t.nominal;
-                }
-                totalSpentAll += t.nominal;
+                const updateType = t.update || "Pengeluaran";
+                const amount = Number(t.nominal) || 0;
 
-                // Filter Criteria Engine matching
-                const matchesAcc = (filterAcc === "ALL" || safeAccount === filterAcc);
-                const matchesCat = (filterCat === "ALL" || t.category === filterCat);
-                const matchesStatus = (filterStatus === "ALL" || 
-                                       (filterStatus === "Lunas" && t.checked) || 
-                                       (filterStatus === "Belum" && !t.checked));
-
-                if (matchesAcc && matchesCat && matchesStatus) {
-                    filteredTransactions.push(t);
+                if (balanceMap[safeAccount] !== undefined) {
+                    if (updateType === "Pengeluaran") {
+                        expenseMap[safeAccount] += amount;
+                        balanceMap[safeAccount] -= amount;
+                        totalSpentAll += amount;
+                    } else if (updateType === "Pemasukan") {
+                        balanceMap[safeAccount] += amount;
+                        totalIncomeAll += amount;
+                    } else if (updateType === "Tabungan") {
+                        balanceMap[safeAccount] += amount;
+                        totalSavingAll += amount;
+                    }
                 }
             });
 
-            // Update Budget Info & Cards (Shows both Spent & Sisa) Safely
-            updateAccountCard("Cash", budgets["Cash"] || 0, spentCountMap["Cash"] || 0);
-            updateAccountCard("E-wallet", budgets["E-wallet"] || 0, spentCountMap["E-wallet"] || 0);
-            updateAccountCard("Bank", budgets["Bank"] || 0, spentCountMap["Bank"] || 0);
+            const periodFiltered = periodTransactions.filter((t) => {
+                const safeAccount = (t.account === "BNI" ? "Bank" : t.account);
+                const updateType = t.update || "Pengeluaran";
+                const matchesAcc = (filterAcc === "ALL" || safeAccount === filterAcc);
+                const matchesCat = (filterCat === "ALL" || t.category === filterCat);
+                const matchesStatus = (filterStatus === "ALL" ||
+                                       (filterStatus === "Lunas" && t.checked) ||
+                                       (filterStatus === "Belum" && !t.checked));
+                const matchesUpdate = (filterUp === "ALL" || updateType === filterUp);
+                return matchesAcc && matchesCat && matchesStatus && matchesUpdate;
+            });
 
-            const totalPortfolio = (budgets["Cash"] || 0) + (budgets["E-wallet"] || 0) + (budgets["Bank"] || 0);
+            filteredTransactions = periodFiltered;
+
+            updateAccountCard("Cash", budgets["Cash"] || 0, expenseMap["Cash"] || 0, balanceMap["Cash"] || 0);
+            updateAccountCard("E-wallet", budgets["E-wallet"] || 0, expenseMap["E-wallet"] || 0, balanceMap["E-wallet"] || 0);
+            updateAccountCard("Bank", budgets["Bank"] || 0, expenseMap["Bank"] || 0, balanceMap["Bank"] || 0);
+
+            const totalPortfolio =
+                (balanceMap["Cash"] || 0) +
+                (balanceMap["E-wallet"] || 0) +
+                (balanceMap["Bank"] || 0);
+
+            const totalNet = totalIncomeAll + totalSavingAll - totalSpentAll;
+            const totalTransactionsCount = periodTransactions.length;
+            const savingsRate = (totalIncomeAll > 0) ? Math.round((totalSavingAll / totalIncomeAll) * 100) : 0;
+            const expenseRatio = (totalIncomeAll > 0) ? Math.round((totalSpentAll / totalIncomeAll) * 100) : 0;
+
+            const spentEl = document.getElementById("grand-total-spent");
+            const incomeEl = document.getElementById("grand-total-income");
+            const savingEl = document.getElementById("grand-total-saving");
+            const netEl = document.getElementById("grand-total-net");
+            if (spentEl) spentEl.innerHTML = formatRupiah(totalSpentAll);
+            if (incomeEl) incomeEl.innerHTML = formatRupiah(totalIncomeAll);
+            if (savingEl) savingEl.innerHTML = formatRupiah(totalSavingAll);
+            if (netEl) netEl.innerHTML = formatRupiah(totalNet);
+
+            const summaryMeta = document.getElementById("summary-meta");
+            if (summaryMeta) {
+                const monthText = filterMonth === "ALL" ? "Semua Bulan" : (MONTH_LABELS[Number(filterMonth)] || "Bulan");
+                const yearText = filterYear === "ALL" ? "Semua Tahun" : filterYear;
+                summaryMeta.textContent = `${monthText} ${yearText} • ${totalTransactionsCount} transaksi`;
+            }
+
             document.getElementById("total-portfolio-text").innerHTML = formatRupiah(totalPortfolio);
 
-            // Populate Rows
+            updateFinanceInsights({
+                totalIncomeAll,
+                totalSpentAll,
+                totalSavingAll,
+                totalNet,
+                savingsRate,
+                expenseRatio
+            });
+
             if (filteredTransactions.length === 0) {
                 emptyState.classList.remove("hidden");
             } else {
                 emptyState.classList.add("hidden");
                 filteredTransactions.forEach((t) => {
                     const safeAccount = (t.account === "BNI" ? "Bank" : t.account);
+                    const updateType = t.update || "Pengeluaran";
+                    const rowTime = t.time || formatTimeFromTimestamp(t.timestamp) || "-";
                     const tr = document.createElement("tr");
                     tr.className = `border-b border-sage-50 transition hover:bg-sage-50/50 ${t.checked ? "text-sage-400 bg-sage-50/20" : ""}`;
-                    
-                    // break-words whitespace-normal ensures long descriptions wrap gracefully
+
                     tr.innerHTML = `
                         <td class="py-4 px-3 text-center">
                             <input type="checkbox" ${t.checked ? "checked" : ""} onchange="toggleChecked(${t.id})" class="w-5 h-5 sm:w-4 sm:h-4 rounded border-sage-300 text-sage-600 focus:ring-sage-500 cursor-pointer accent-sage-600">
                         </td>
                         <td class="py-4 px-3 text-sage-500 font-semibold text-[11px]">${formatDate(t.date)}</td>
+                        <td class="py-4 px-3 text-center text-[11px] font-semibold text-sage-500">${rowTime}</td>
                         <td class="py-4 px-3 font-medium break-words whitespace-normal max-w-[180px] sm:max-w-[260px] ${t.checked ? "line-through text-sage-400" : "text-sage-900"}">${t.detail}</td>
                         <td class="py-4 px-3 text-center">
                             <span class="px-2.5 py-1 sm:py-0.5 rounded text-[10px] font-bold ${getAccountLabelClass(safeAccount)}">${safeAccount}</span>
                         </td>
                         <td class="py-4 px-3 text-center">
+                            <span class="${getUpdateBadgeClass(updateType)}">${updateType}</span>
+                        </td>
+                        <td class="py-4 px-3 text-center">
                             <span class="px-2.5 py-1 sm:py-0.5 rounded text-[10px] font-medium bg-sage-100 text-sage-700">${t.category}</span>
                         </td>
-                        <td class="py-4 px-3 text-right font-bold text-sage-900 ${t.checked ? "text-sage-400 line-through" : ""}">${formatRupiah(t.nominal)}</td>
+                        <td class="py-4 px-3 text-right font-bold text-sage-900 ${t.checked ? "text-sage-400 line-through" : ""}">${formatRupiah(Number(t.nominal) || 0)}</td>
                         <td class="py-4 px-3 text-center">
                             <button onclick="deleteTransaction(${t.id})" class="text-sage-400 hover:text-red-500 transition text-[13px] sm:text-[11px] p-2">
                                 <i class="fa-solid fa-trash-can"></i>
@@ -894,50 +1323,47 @@
                 });
             }
 
-            // Summary Info Section update values
             document.getElementById("displayed-count").innerText = filteredTransactions.length;
-            document.getElementById("total-count").innerText = transactions.length;
-            document.getElementById("grand-total-spent").innerHTML = formatRupiah(totalSpentAll);
+            document.getElementById("total-count").innerText = periodTransactions.length;
 
-            // Re-calculate the daily budget metrics on table redraw
             calculateDailyBudgetStats();
         }
 
         // Card rendering optimization parameters helper
-        function updateAccountCard(accId, target, spent) {
+        function updateAccountCard(accId, target, spent, balance) {
             const keyPrefix = accId.toLowerCase().replace("-", "");
-            
+
             const targetEl = document.getElementById(`${keyPrefix}-budget-text`);
             const spentEl = document.getElementById(`${keyPrefix}-spent-text`);
             const sisaEl = document.getElementById(`${keyPrefix}-sisa-text`);
             const percentEl = document.getElementById(`${keyPrefix}-percent-text`);
             const progressEl = document.getElementById(`${keyPrefix}-progress`);
 
-            if (targetEl) targetEl.innerHTML = formatRupiah(target);
-            if (spentEl) spentEl.innerHTML = formatRupiah(spent);
-            
-            // Sisa Budget calculation
-            const sisa = target - spent;
+            const safeTarget = Number(target) || 0;
+            const safeSpent = Number(spent) || 0;
+            const safeBalance = Number(balance) || 0;
+
+            if (targetEl) targetEl.innerHTML = formatRupiah(safeTarget);
+            if (spentEl) spentEl.innerHTML = formatRupiah(safeSpent);
+
             if (sisaEl) {
-                sisaEl.innerHTML = formatRupiah(sisa);
-                if (sisa < 0) {
+                sisaEl.innerHTML = formatRupiah(safeBalance);
+                if (safeBalance < 0) {
                     sisaEl.className = "text-red-600 font-extrabold";
                 } else {
                     sisaEl.className = "text-emerald-600 font-extrabold";
                 }
             }
-            
-            // Calculate Percent ratio
+
             let percent = 0;
-            if (target > 0) {
-                percent = Math.min(100, Math.round((spent / target) * 100));
+            if (safeTarget > 0) {
+                percent = Math.min(100, Math.round((safeSpent / safeTarget) * 100));
             }
-            
+
             if (percentEl) percentEl.innerText = `${percent}%`;
-            
+
             if (progressEl) {
                 progressEl.style.width = `${percent}%`;
-                // Style progress color dynamically
                 if (percent >= 90) {
                     progressEl.className = "bg-red-500 h-full transition-all duration-500";
                 } else if (percent >= 75) {
@@ -952,6 +1378,137 @@
             if (acc === "Cash") return "bg-emerald-50 text-emerald-700 border border-emerald-100";
             if (acc === "E-wallet") return "bg-indigo-50 text-indigo-700 border border-indigo-100";
             return "bg-blue-50 text-blue-700 border border-blue-100"; // Bank
+        }
+
+        function updateFinanceInsights(metrics) {
+            const scoreEl = document.getElementById("finance-health-score");
+            const statusEl = document.getElementById("finance-health-status");
+            const noteEl = document.getElementById("finance-health-note");
+            const barEl = document.getElementById("finance-health-bar");
+            const savingsRateEl = document.getElementById("finance-savings-rate");
+            const netCashEl = document.getElementById("finance-net-cashflow");
+            const expenseRatioEl = document.getElementById("finance-expense-ratio");
+            const topCategoryEl = document.getElementById("finance-top-category");
+            const topAccountEl = document.getElementById("finance-top-account");
+            const insightsEl = document.getElementById("smart-insights-list");
+
+            const income = Number(metrics?.totalIncomeAll) || 0;
+            const spent = Number(metrics?.totalSpentAll) || 0;
+            const saved = Number(metrics?.totalSavingAll) || 0;
+            const net = Number(metrics?.totalNet) || 0;
+            const savingsRate = Number(metrics?.savingsRate) || 0;
+            const expenseRatio = Number(metrics?.expenseRatio) || 0;
+
+            const score = Math.max(
+                0,
+                Math.min(
+                    100,
+                    Math.round(
+                        (income > 0 ? savingsRate * 0.9 : 0) +
+                        (net > 0 ? 18 : -12) +
+                        (expenseRatio <= 50 ? 18 : expenseRatio <= 75 ? 6 : -8) +
+                        (saved > 0 ? 10 : -6) +
+                        (spent === 0 && income === 0 ? 20 : 0)
+                    )
+                )
+            );
+
+            let statusText = "Belum Ada Data";
+            let statusClass = "bg-sage-100 text-sage-700 border-sage-200";
+            let barClass = "bg-sage-600";
+            if (income === 0 && spent === 0 && saved === 0) {
+                statusText = "Belum Ada Data";
+            } else if (score >= 85) {
+                statusText = "Excellent";
+                statusClass = "bg-emerald-100 text-emerald-700 border-emerald-200";
+                barClass = "bg-emerald-600";
+            } else if (score >= 70) {
+                statusText = "Healthy";
+                statusClass = "bg-sky-100 text-sky-700 border-sky-200";
+                barClass = "bg-sky-600";
+            } else if (score >= 50) {
+                statusText = "Perlu Fokus";
+                statusClass = "bg-amber-100 text-amber-700 border-amber-200";
+                barClass = "bg-amber-500";
+            } else {
+                statusText = "Butuh Perhatian";
+                statusClass = "bg-red-100 text-red-700 border-red-200";
+                barClass = "bg-red-500";
+            }
+
+            if (scoreEl) scoreEl.textContent = `${score}/100`;
+            if (statusEl) {
+                statusEl.className = `px-2.5 py-1 rounded-full text-[10px] font-bold border ${statusClass}`;
+                statusEl.textContent = statusText;
+            }
+            if (noteEl) {
+                if (income === 0 && spent === 0 && saved === 0) {
+                    noteEl.textContent = "Mulai catat transaksi untuk melihat skor kesehatan keuangan bulanan Anda.";
+                } else if (spent > income) {
+                    noteEl.textContent = "Pengeluaran saat ini melebihi pemasukan. Pertimbangkan untuk menekan kategori terbesar.";
+                } else if (savingsRate >= 20) {
+                    noteEl.textContent = "Rasio tabungan Anda kuat. Ini terlihat disiplin dan sehat untuk jangka panjang.";
+                } else {
+                    noteEl.textContent = "Keuangan cukup stabil, tetapi masih ada ruang untuk meningkatkan tabungan.";
+                }
+            }
+            if (barEl) {
+                barEl.className = `h-full transition-all duration-500 ${barClass}`;
+                barEl.style.width = `${Math.max(0, Math.min(100, score))}%`;
+            }
+            if (savingsRateEl) savingsRateEl.textContent = `${savingsRate}%`;
+            if (netCashEl) netCashEl.textContent = formatRupiah(net);
+            if (expenseRatioEl) expenseRatioEl.textContent = `${expenseRatio}%`;
+
+            const categoryMap = {};
+            const accountMap = {};
+            (transactions || []).forEach(tx => {
+                const t = normalizeTransaction(tx);
+                const amount = Number(t.nominal) || 0;
+                const type = t.update || "Pengeluaran";
+                if (type === "Pengeluaran") {
+                    categoryMap[t.category || "Lainnya"] = (categoryMap[t.category || "Lainnya"] || 0) + amount;
+                }
+                accountMap[t.account || "Cash"] = (accountMap[t.account || "Cash"] || 0) + amount;
+            });
+
+            const topCategory = Object.entries(categoryMap).sort((a,b) => b[1] - a[1])[0];
+            const topAccount = Object.entries(accountMap).sort((a,b) => b[1] - a[1])[0];
+
+            if (topCategoryEl) topCategoryEl.textContent = topCategory ? `${topCategory[0]}` : "-";
+            if (topAccountEl) topAccountEl.textContent = topAccount ? `${topAccount[0]}` : "-";
+
+            const insights = [];
+            if (income > 0) {
+                insights.push(`Pemasukan bulan ini ${savingsRate >= 20 ? "mencapai" : "berada di"} rasio tabungan ${savingsRate}%.`);
+            }
+            if (topCategory) {
+                insights.push(`Kategori terbesar Anda adalah ${topCategory[0]} sebesar ${formatRupiah(topCategory[1])}.`);
+            }
+            if (spent > income) {
+                insights.push(`Pengeluaran melebihi pemasukan sebesar ${formatRupiah(spent - income)}. Fokus pada efisiensi.`);
+            } else if (net > 0) {
+                insights.push(`Saldo bersih positif ${formatRupiah(net)}. Kondisi keuangan Anda sedang aman.`);
+            }
+            if (saved > 0) {
+                insights.push(`Tabungan bulan ini sudah terkumpul ${formatRupiah(saved)}. Pertahankan ritmenya.`);
+            }
+
+                        if (insightsEl) {
+                const itemStyle = "insight-item finance-card relative overflow-hidden rounded-xl bg-white border border-sage-100 p-3 flex items-start gap-2 min-w-0 shadow-sm";
+                insightsEl.innerHTML = insights.length
+                    ? insights.slice(0, 4).map((item, index) => `
+                        <li class="${itemStyle}">
+                            <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-sage-500/20 via-sage-200/60 to-sage-500/20"></div>
+                            <span class="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-sage-100 bg-sage-50 text-[10px] font-bold text-sage-500">${index + 1}</span>
+                            <span class="flex-1 insight-copy">${item}</span>
+                        </li>`).join("")
+                    : `<li class="${itemStyle}">
+                            <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-sage-500/20 via-sage-200/60 to-sage-500/20"></div>
+                            <span class="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-sage-100 bg-sage-50 text-[10px] font-bold text-sage-500">1</span>
+                            <span class="flex-1 insight-copy">Belum ada data untuk dianalisis.</span>
+                        </li>`;
+            }
         }
 
         // Budget Modals Management
@@ -974,6 +1531,20 @@
                 modal.classList.add("hidden");
             }, 150);
         }
+    
+       function getUpdateBadgeClass(type) {
+
+            if(type === "Pengeluaran"){
+                return "px-2 py-1 rounded text-[10px] font-bold bg-red-50 text-red-600 border border-red-200";
+            }
+            if(type === "Pemasukan"){
+                return "px-2 py-1 rounded text-[10px] font-bold bg-green-50 text-green-600 border border-green-200";
+            }
+            if(type === "Tabungan"){
+                return "px-2 py-1 rounded text-[10px] font-bold bg-sky-50 text-sky-600 border border-sky-200";
+            }
+            return "px-2 py-1 rounded text-[10px] font-bold bg-sage-50 text-sage-600";
+        }
 
         function saveNewBudget(e) {
             e.preventDefault();
@@ -984,6 +1555,7 @@
             localStorage.setItem("sage_budgets", JSON.stringify(budgets));
             
             closeBudgetModal();
+            populateYearFilter();
             renderTable();
             showToast(`Budget ${accName} berhasil disesuaikan!`);
             triggerAutoSync();
@@ -995,6 +1567,7 @@
             if (tx) {
                 tx.checked = !tx.checked;
                 localStorage.setItem("sage_transactions", JSON.stringify(transactions));
+                populateYearFilter();
                 renderTable();
                 showToast(`Status transaksi "${tx.detail}" diubah.`);
                 triggerAutoSync();
@@ -1009,6 +1582,7 @@
                 if (confirm(`Hapus transaksi "${targetTx.detail}"?`)) {
                     transactions.splice(index, 1);
                     localStorage.setItem("sage_transactions", JSON.stringify(transactions));
+                    populateYearFilter();
                     renderTable();
                     showToast(`Transaksi berhasil dihapus.`);
                     triggerAutoSync();
@@ -1019,35 +1593,43 @@
         // Form Submission Add Action
         function addTransaction(e) {
             e.preventDefault();
+            const updateVal = document.getElementById("new-update").value || "Pengeluaran";
             const detailVal = document.getElementById("new-detail").value.trim();
             const nominalVal = parseInt(document.getElementById("new-nominal").value) || 0;
             const dateVal = document.getElementById("new-date").value;
             const accountVal = document.getElementById("new-account").value;
             const categoryVal = document.getElementById("new-category").value;
-
             if (detailVal === "" || nominalVal <= 0 || !dateVal) {
                 showToast("Harap lengkapi semua formulir dengan benar!", "error");
                 return;
             }
 
-            const newTx = {
+            const { time } = getNowParts();
+
+            const newTx = normalizeTransaction({
                 id: Date.now(),
                 checked: false,
                 date: dateVal,
+                time: time,
+                timestamp: `${dateVal}T${time}`,
+                update: updateVal,
                 detail: detailVal,
                 nominal: nominalVal,
                 account: accountVal,
                 category: categoryVal
-            };
+            });
 
             transactions.unshift(newTx); // Insert as first item (newest)
+            sortTransactionsNewestFirst();
             localStorage.setItem("sage_transactions", JSON.stringify(transactions));
-            
+
             // Clean interface fields
+            document.getElementById("new-update").value = "Pengeluaran";
             document.getElementById("new-detail").value = "";
             document.getElementById("new-nominal").value = "";
             document.getElementById('new-date').valueAsDate = new Date();
 
+            populateYearFilter();
             renderTable();
             showToast(`Berhasil menambahkan: "${detailVal}"`);
             triggerAutoSync();
@@ -1060,8 +1642,11 @@
                 if (dateVal === todayStr) {
                     let dailySpent = 0;
                     transactions.forEach(t => {
-                        if (t.date === todayStr && t.category !== "Kuliah" && t.category !== "Kos/Bulanan") {
-                            dailySpent += t.nominal;
+                        if (t.update === "Pengeluaran" && 
+                            t.date === todayStr && 
+                            t.category !== "Kuliah" && 
+                            t.category !== "Kos/Bulanan") {
+                            dailySpent += Number(t.nominal) || 0;
                         }
                     });
                     if (dailySpent > dailyBudgetLimit) {
@@ -1070,6 +1655,263 @@
                 }
             }
         }
+
+
+        function getCurrentFilterValues() {
+            return {
+                filterUp: document.getElementById("filter-update") ? document.getElementById("filter-update").value : "ALL",
+                filterAcc: document.getElementById("filter-account") ? document.getElementById("filter-account").value : "ALL",
+                filterCat: document.getElementById("filter-category") ? document.getElementById("filter-category").value : "ALL",
+                filterStatus: document.getElementById("filter-status") ? document.getElementById("filter-status").value : "ALL",
+                filterMonth: document.getElementById("filter-month") ? document.getElementById("filter-month").value : "ALL",
+                filterYear: document.getElementById("filter-year") ? document.getElementById("filter-year").value : "ALL",
+            };
+        }
+
+        function getFilteredTransactionsForCurrentView() {
+            const { filterUp, filterAcc, filterCat, filterStatus, filterMonth, filterYear } = getCurrentFilterValues();
+            const normalizedTransactions = (transactions || []).map(normalizeTransaction);
+
+            return normalizedTransactions.filter((tx) => {
+                const { month, year } = getTransactionDateParts(tx);
+                const updateType = tx.update || "Pengeluaran";
+                const safeAccount = (tx.account === "BNI" ? "Bank" : tx.account);
+
+                const monthOk = (filterMonth === "ALL" || String(month) === String(filterMonth));
+                const yearOk = (filterYear === "ALL" || String(year) === String(filterYear));
+                const accOk = (filterAcc === "ALL" || safeAccount === filterAcc);
+                const catOk = (filterCat === "ALL" || tx.category === filterCat);
+                const statusOk = (filterStatus === "ALL" ||
+                    (filterStatus === "Lunas" && tx.checked) ||
+                    (filterStatus === "Belum" && !tx.checked));
+                const updateOk = (filterUp === "ALL" || updateType === filterUp);
+
+                return monthOk && yearOk && accOk && catOk && statusOk && updateOk;
+            }).sort((a, b) => getTimestampValue(b) - getTimestampValue(a));
+        }
+
+        function buildReportRows(transactionsList) {
+            return transactionsList.map((t) => {
+                const safeAccount = (t.account === "BNI" ? "Bank" : t.account);
+                const updateType = t.update || "Pengeluaran";
+                return `
+                    <tr>
+                        <td>${formatDate(t.date)}</td>
+                        <td>${t.time || formatTimeFromTimestamp(t.timestamp) || "-"}</td>
+                        <td>${t.detail || "-"}</td>
+                        <td>${safeAccount}</td>
+                        <td>${updateType}</td>
+                        <td>${t.category || "-"}</td>
+                        <td>${formatRupiah(Number(t.nominal) || 0)}</td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        function buildReportSummary(filteredTx) {
+            let income = 0, expense = 0, saving = 0;
+            filteredTx.forEach(t => {
+                const amt = Number(t.nominal) || 0;
+                if ((t.update || "Pengeluaran") === "Pengeluaran") expense += amt;
+                else if (t.update === "Pemasukan") income += amt;
+                else if (t.update === "Tabungan") saving += amt;
+            });
+            return { income, expense, saving, net: income + saving - expense };
+        }
+
+        function exportCurrentReportCSV() {
+            const rows = getFilteredTransactionsForCurrentView();
+            if (!rows.length) {
+                showToast("Tidak ada data untuk diekspor pada periode ini.", "info");
+                return;
+            }
+
+            const header = ["Tanggal", "Waktu", "Keterangan", "Akun", "Jenis", "Kategori", "Nominal"];
+            const csvRows = [
+                header.join(","),
+                ...rows.map(t => [
+                    `"${(t.date || "").replaceAll('"', '""')}"`,
+                    `"${(t.time || formatTimeFromTimestamp(t.timestamp) || "-").replaceAll('"', '""')}"`,
+                    `"${String(t.detail || "-").replaceAll('"', '""')}"`,
+                    `"${String((t.account === "BNI" ? "Bank" : t.account) || "-").replaceAll('"', '""')}"`,
+                    `"${String(t.update || "Pengeluaran").replaceAll('"', '""')}"`,
+                    `"${String(t.category || "-").replaceAll('"', '""')}"`,
+                    `"${String(Number(t.nominal) || 0).replaceAll('"', '""')}"`
+                ].join(","))
+            ];
+
+            const blob = new Blob(["﻿" + csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `Laporan_Keuangan_Bulanan_${new Date().toISOString().slice(0,10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            showToast("Export Excel/CSV berhasil dibuat.");
+        }
+
+        function exportCurrentReportPDF() {
+            const rows = getFilteredTransactionsForCurrentView();
+            if (!rows.length) {
+                showToast("Tidak ada data untuk diekspor pada periode ini.", "info");
+                return;
+            }
+
+            const { filterMonth, filterYear } = getCurrentFilterValues();
+            const monthText = filterMonth === "ALL" ? "Semua Bulan" : (MONTH_LABELS[Number(filterMonth)] || "Bulan");
+            const yearText = filterYear === "ALL" ? "Semua Tahun" : filterYear;
+            const summary = buildReportSummary(rows);
+
+            const html = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <title>Laporan Keuangan Bulanan</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 28px; color: #1a201c; }
+                        h1 { margin: 0 0 6px; font-size: 22px; }
+                        .meta { color: #556; font-size: 12px; margin-bottom: 18px; }
+                        .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 18px 0 22px; }
+                        .card { border: 1px solid #ddd; border-radius: 12px; padding: 12px; }
+                        .label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: #667; font-weight: 700; }
+                        .value { font-size: 16px; font-weight: 800; margin-top: 6px; }
+                        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: top; }
+                        th { background: #f4f7f5; }
+                        @media print { body { padding: 14px; } }
+                    </style>
+                </head>
+                <body>
+                    <h1>Laporan Keuangan Bulanan</h1>
+                    <div class="meta">${monthText} ${yearText} • ${rows.length} transaksi</div>
+                    <div class="cards">
+                        <div class="card"><div class="label">Total Pemasukan</div><div class="value">${formatRupiah(summary.income)}</div></div>
+                        <div class="card"><div class="label">Total Pengeluaran</div><div class="value">${formatRupiah(summary.expense)}</div></div>
+                        <div class="card"><div class="label">Total Tabungan</div><div class="value">${formatRupiah(summary.saving)}</div></div>
+                        <div class="card"><div class="label">Saldo Bersih</div><div class="value">${formatRupiah(summary.net)}</div></div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Waktu</th>
+                                <th>Keterangan</th>
+                                <th>Akun</th>
+                                <th>Jenis</th>
+                                <th>Kategori</th>
+                                <th>Nominal</th>
+                            </tr>
+                        </thead>
+                        <tbody>${buildReportRows(rows)}</tbody>
+                    </table>
+                </body>
+                </html>
+            `;
+
+            const win = window.open("", "_blank", "width=1100,height=800");
+            if (!win) {
+                showToast("Popup diblokir browser. Izinkan popup untuk export PDF.", "error");
+                return;
+            }
+            win.document.open();
+            win.document.write(html);
+            win.document.close();
+            setTimeout(() => {
+                try {
+                    win.focus();
+                    win.print();
+                } catch (e) {
+                    console.error(e);
+                }
+            }, 500);
+            showToast("Membuka pratinjau PDF...");
+        }
+
+        function downloadBackupJSON() {
+            const backup = {
+                exportedAt: new Date().toISOString(),
+                budgets,
+                transactions
+            };
+
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `Backup_Laporan_Keuangan_${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            localStorage.setItem("sage_backup_status", new Date().toISOString());
+            updateBackupStatus();
+            showToast("Backup JSON berhasil diunduh.");
+        }
+
+        function triggerRestorePicker() {
+            const input = document.getElementById("restore-file-input");
+            if (input) input.click();
+        }
+
+        async function restoreBackupFile(event) {
+            const file = event && event.target && event.target.files ? event.target.files[0] : null;
+            if (!file) return;
+
+            try {
+                const text = await file.text();
+                const parsed = JSON.parse(text);
+
+                if (parsed && typeof parsed === "object") {
+                    if (parsed.budgets) {
+                        budgets = {
+                            Cash: Number(parsed.budgets.Cash) || 0,
+                            "E-wallet": Number(parsed.budgets["E-wallet"]) || 0,
+                            Bank: Number(parsed.budgets.Bank) || 0
+                        };
+                        localStorage.setItem("sage_budgets", JSON.stringify(budgets));
+                    }
+
+                    if (Array.isArray(parsed.transactions)) {
+                        transactions = parsed.transactions.map(normalizeTransaction);
+                        sortTransactionsNewestFirst();
+                        localStorage.setItem("sage_transactions", JSON.stringify(transactions));
+                    }
+
+                    populateYearFilter();
+                    renderTable();
+                    updateBackupStatus();
+                    showToast("Data backup berhasil dipulihkan.");
+                    triggerAutoSync();
+                } else {
+                    throw new Error("Format backup tidak valid.");
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Gagal memulihkan backup. Pastikan file JSON valid.", "error");
+            } finally {
+                if (event && event.target) event.target.value = "";
+            }
+        }
+
+        function updateBackupStatus() {
+            const el = document.getElementById("backup-status");
+            if (!el) return;
+            const saved = localStorage.getItem("sage_backup_status");
+            if (!saved) {
+                el.textContent = "Backup belum dibuat";
+                return;
+            }
+            const d = new Date(saved);
+            if (isNaN(d)) {
+                el.textContent = "Backup belum dibuat";
+                return;
+            }
+            el.textContent = `Backup: ${d.toLocaleDateString("id-ID")}`;
+        }
+
 
         // Helpers for styling formats
         function formatRupiah(num) {
@@ -1130,7 +1972,11 @@
         }
 
         // Standard load callback hook
-        window.onload = init;
+        window.onload = function () {
+            init();
+            updateLiveClock();
+            setInterval(updateLiveClock, 1000);
+        };
     </script>
 </body>
 </html>
