@@ -704,11 +704,74 @@
             return new Date(0);
         }
 
+        function normalizeTimeValue(value) {
+            if (value === undefined || value === null || value === "") return "";
+
+            // Preserve already-clean HH:MM or HH:MM:SS values.
+            if (typeof value === "string") {
+                const trimmed = value.trim();
+
+                if (/^\d{2}:\d{2}$/.test(trimmed)) {
+                    return `${trimmed}:00`;
+                }
+                if (/^\d{2}:\d{2}:\d{2}$/.test(trimmed)) {
+                    return trimmed;
+                }
+
+                // Spreadsheet / ISO-style time values often arrive as 1899-12-30T12:36:53.000Z.
+                const isoTimeMatch = trimmed.match(/T(\d{2}:\d{2}(?::\d{2})?)(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?$/i);
+                if (isoTimeMatch) {
+                    const parts = isoTimeMatch[1].split(":");
+                    return parts.length === 2 ? `${isoTimeMatch[1]}:00` : isoTimeMatch[1];
+                }
+
+                const parsed = new Date(trimmed);
+                if (!isNaN(parsed)) {
+                    return parsed.toLocaleTimeString("id-ID", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: false
+                    });
+                }
+
+                return trimmed;
+            }
+
+            if (value instanceof Date && !isNaN(value)) {
+                return value.toLocaleTimeString("id-ID", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: false
+                });
+            }
+
+            if (typeof value === "number") {
+                // Treat numeric spreadsheet values as a time fraction when possible.
+                if (value >= 0 && value < 1) {
+                    const totalSeconds = Math.round(value * 24 * 60 * 60);
+                    const hours = String(Math.floor(totalSeconds / 3600) % 24).padStart(2, "0");
+                    const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+                    const seconds = String(totalSeconds % 60).padStart(2, "0");
+                    return `${hours}:${minutes}:${seconds}`;
+                }
+                const parsed = new Date(value);
+                if (!isNaN(parsed)) {
+                    return parsed.toLocaleTimeString("id-ID", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: false
+                    });
+                }
+            }
+
+            return "";
+        }
+
         function formatTimeFromTimestamp(timestamp) {
-            if (!timestamp) return "";
-            const d = new Date(timestamp);
-            if (isNaN(d)) return "";
-            return d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+            return normalizeTimeValue(timestamp);
         }
 
         function sortTransactionsNewestFirst() {
@@ -803,12 +866,18 @@
                     t.nominal = Number(t.nominal) || 0;
                     t.detail = String(t.detail || "").trim();
                     t.category = t.category || "Lainnya";
+                    if (!t.time) {
+                        t.time = normalizeTimeValue(t.timestamp) || "00:00:00";
+                        updated = true;
+                    } else {
+                        const cleanTime = normalizeTimeValue(t.time);
+                        if (cleanTime && cleanTime !== t.time) {
+                            t.time = cleanTime;
+                            updated = true;
+                        }
+                    }
                     if (!t.timestamp) {
                         t.timestamp = `${t.date || "1970-01-01"}T${t.time || "00:00:00"}`;
-                        updated = true;
-                    }
-                    if (!t.time) {
-                        t.time = formatTimeFromTimestamp(t.timestamp) || "00:00:00";
                         updated = true;
                     }
                 });
@@ -972,7 +1041,7 @@
         function normalizeTransaction(tx) {
             if (!tx || typeof tx !== "object") return tx;
             const normalizedDate = tx.date || "";
-            const normalizedTime = tx.time || (tx.timestamp ? formatTimeFromTimestamp(tx.timestamp) : "");
+            const normalizedTime = normalizeTimeValue(tx.time || tx.timestamp);
             const normalizedTimestamp = tx.timestamp || (normalizedDate ? `${normalizedDate}T${normalizedTime || "00:00:00"}` : "");
             return {
                 id: tx.id ?? Date.now(),
@@ -1292,7 +1361,7 @@
                 filteredTransactions.forEach((t) => {
                     const safeAccount = (t.account === "BNI" ? "Bank" : t.account);
                     const updateType = t.update || "Pengeluaran";
-                    const rowTime = t.time || formatTimeFromTimestamp(t.timestamp) || "-";
+                    const rowTime = normalizeTimeValue(t.time || t.timestamp) || "-";
                     const tr = document.createElement("tr");
                     tr.className = `border-b border-sage-50 transition hover:bg-sage-50/50 ${t.checked ? "text-sage-400 bg-sage-50/20" : ""}`;
 
@@ -1605,13 +1674,14 @@
             }
 
             const { time } = getNowParts();
+            const cleanTime = normalizeTimeValue(time) || time;
 
             const newTx = normalizeTransaction({
                 id: Date.now(),
                 checked: false,
                 date: dateVal,
-                time: time,
-                timestamp: `${dateVal}T${time}`,
+                time: cleanTime,
+                timestamp: `${dateVal}T${cleanTime}`,
                 update: updateVal,
                 detail: detailVal,
                 nominal: nominalVal,
@@ -1697,7 +1767,7 @@
                 return `
                     <tr>
                         <td>${formatDate(t.date)}</td>
-                        <td>${t.time || formatTimeFromTimestamp(t.timestamp) || "-"}</td>
+                        <td>${normalizeTimeValue(t.time || t.timestamp) || "-"}</td>
                         <td>${t.detail || "-"}</td>
                         <td>${safeAccount}</td>
                         <td>${updateType}</td>
@@ -1731,7 +1801,7 @@
                 header.join(","),
                 ...rows.map(t => [
                     `"${(t.date || "").replaceAll('"', '""')}"`,
-                    `"${(t.time || formatTimeFromTimestamp(t.timestamp) || "-").replaceAll('"', '""')}"`,
+                    `"${(normalizeTimeValue(t.time || t.timestamp) || "-").replaceAll('"', '""')}"`,
                     `"${String(t.detail || "-").replaceAll('"', '""')}"`,
                     `"${String((t.account === "BNI" ? "Bank" : t.account) || "-").replaceAll('"', '""')}"`,
                     `"${String(t.update || "Pengeluaran").replaceAll('"', '""')}"`,
