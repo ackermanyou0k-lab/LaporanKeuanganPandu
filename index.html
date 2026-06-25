@@ -930,6 +930,7 @@
         // Initialize state, load permanent browser storage, and pull from sheets if available
         function init() {
             const savedTx = localStorage.getItem("sage_transactions");
+            const hasLocalTransactions = !!savedTx && savedTx !== "[]";
             if (savedTx) {
                 try {
                     transactions = JSON.parse(savedTx).map(normalizeTransaction);
@@ -984,7 +985,9 @@
             if (savedApiUrl) {
                 document.getElementById("api-url").value = savedApiUrl;
                 updateSyncBadge("cloud", "Koneksi Tersedia");
-                pullFromSheets(true);
+                if (!hasLocalTransactions) {
+                    pullFromSheets(true);
+                }
             } else {
                 updateSyncBadge("offline", "Lokal (Belum Sinkron)");
             }
@@ -1160,16 +1163,18 @@
                     
                     if (data.budgets) {
                         // Safe conversion again during fetch mapping
-                        if (data.budgets["BNI"] !== undefined) {
-                            data.budgets["Bank"] = data.budgets["BNI"];
-                            delete data.budgets["BNI"];
+                        const incomingBudgets = Object.assign({}, data.budgets);
+                        if (incomingBudgets["BNI"] !== undefined) {
+                            incomingBudgets["Bank"] = incomingBudgets["BNI"];
+                            delete incomingBudgets["BNI"];
                         }
-                        budgets = data.budgets;
+                        budgets = Object.assign({ "Cash": 0, "E-wallet": 0, "Bank": 0 }, budgets || {}, incomingBudgets);
                         localStorage.setItem("sage_budgets", JSON.stringify(budgets));
                         hasChanges = true;
                     }
                     if (data.transactions) {
-                        transactions = dedupeTransactions(data.transactions.map(normalizeTransaction));
+                        const incomingTransactions = dedupeTransactions((data.transactions || []).map(normalizeTransaction));
+                        transactions = dedupeTransactions([...(transactions || []), ...incomingTransactions]);
                         sortTransactionsNewestFirst();
                         localStorage.setItem("sage_transactions", JSON.stringify(transactions));
                         hasChanges = true;
