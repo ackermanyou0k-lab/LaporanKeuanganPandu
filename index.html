@@ -693,32 +693,92 @@
         }
 
         function getTimestampValue(tx) {
-            if (tx && tx.timestamp) {
-                const d = new Date(tx.timestamp);
+            const normalizedDate = normalizeDateValue(tx && tx.date ? tx.date : "");
+            const normalizedTime = normalizeTimeValue(tx && tx.time ? tx.time : tx && tx.timestamp ? tx.timestamp : "");
+            const stamp = tx && tx.timestamp ? String(tx.timestamp) : "";
+            if (stamp) {
+                const d = new Date(stamp);
                 if (!isNaN(d)) return d;
             }
-            const date = tx && tx.date ? tx.date : "1970-01-01";
-            const time = tx && tx.time ? tx.time : "00:00:00";
+            const date = normalizedDate || "1970-01-01";
+            const time = normalizedTime || "00:00:00";
             const d = new Date(`${date}T${time}`);
             if (!isNaN(d)) return d;
             return new Date(0);
         }
 
+        function normalizeDateValue(value) {
+            if (value === undefined || value === null || value === "") return "";
+
+            if (value instanceof Date && !isNaN(value)) {
+                return Utilities.formatDate(value, Session.getScriptTimeZone(), "yyyy-MM-dd");
+            }
+
+            if (typeof value === "number") {
+                const parsed = new Date(value);
+                if (!isNaN(parsed)) {
+                    return Utilities.formatDate(parsed, Session.getScriptTimeZone(), "yyyy-MM-dd");
+                }
+            }
+
+            const raw = String(value).trim();
+            if (!raw) return "";
+
+            if (raw.includes("T")) {
+                const firstPart = raw.split("T")[0];
+                const match = firstPart.match(/^(\d{4}-\d{2}-\d{2})/);
+                if (match) return match[1];
+            }
+
+            const match = raw.match(/^(\d{4}-\d{2}-\d{2})/);
+            if (match) return match[1];
+
+            const parsed = new Date(raw);
+            if (!isNaN(parsed)) {
+                return Utilities.formatDate(parsed, Session.getScriptTimeZone(), "yyyy-MM-dd");
+            }
+
+            return raw;
+        }
+
         function normalizeTimeValue(value) {
             if (value === undefined || value === null || value === "") return "";
 
-            // Preserve already-clean HH:MM or HH:MM:SS values.
+            if (value instanceof Date && !isNaN(value)) {
+                return value.toLocaleTimeString("id-ID", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: false
+                });
+            }
+
+            if (typeof value === "number") {
+                if (value >= 0 && value < 1) {
+                    const totalSeconds = Math.round(value * 24 * 60 * 60);
+                    const hours = String(Math.floor(totalSeconds / 3600) % 24).padStart(2, "0");
+                    const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+                    const seconds = String(totalSeconds % 60).padStart(2, "0");
+                    return `${hours}:${minutes}:${seconds}`;
+                }
+                const parsed = new Date(value);
+                if (!isNaN(parsed)) {
+                    return parsed.toLocaleTimeString("id-ID", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: false
+                    });
+                }
+            }
+
             if (typeof value === "string") {
                 const trimmed = value.trim();
+                if (!trimmed) return "";
 
-                if (/^\d{2}:\d{2}$/.test(trimmed)) {
-                    return `${trimmed}:00`;
-                }
-                if (/^\d{2}:\d{2}:\d{2}$/.test(trimmed)) {
-                    return trimmed;
-                }
+                if (/^\d{2}:\d{2}$/.test(trimmed)) return `${trimmed}:00`;
+                if (/^\d{2}:\d{2}:\d{2}$/.test(trimmed)) return trimmed;
 
-                // Spreadsheet / ISO-style time values often arrive as 1899-12-30T12:36:53.000Z.
                 const isoTimeMatch = trimmed.match(/T(\d{2}:\d{2}(?::\d{2})?)(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?$/i);
                 if (isoTimeMatch) {
                     const parts = isoTimeMatch[1].split(":");
@@ -738,35 +798,6 @@
                 return trimmed;
             }
 
-            if (value instanceof Date && !isNaN(value)) {
-                return value.toLocaleTimeString("id-ID", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    hour12: false
-                });
-            }
-
-            if (typeof value === "number") {
-                // Treat numeric spreadsheet values as a time fraction when possible.
-                if (value >= 0 && value < 1) {
-                    const totalSeconds = Math.round(value * 24 * 60 * 60);
-                    const hours = String(Math.floor(totalSeconds / 3600) % 24).padStart(2, "0");
-                    const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
-                    const seconds = String(totalSeconds % 60).padStart(2, "0");
-                    return `${hours}:${minutes}:${seconds}`;
-                }
-                const parsed = new Date(value);
-                if (!isNaN(parsed)) {
-                    return parsed.toLocaleTimeString("id-ID", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: false
-                    });
-                }
-            }
-
             return "";
         }
 
@@ -779,7 +810,7 @@
         }
 
         function getTransactionDateParts(tx) {
-            const dateStr = (tx && tx.date) ? String(tx.date) : "";
+            const dateStr = normalizeDateValue(tx && tx.date ? tx.date : "");
             const parts = dateStr.split("-");
             const year = parts.length === 3 ? Number(parts[0]) : null;
             const month = parts.length === 3 ? Number(parts[1]) : null;
@@ -842,6 +873,59 @@
             }
         }
 
+        function normalizeTransaction(tx) {
+            if (!tx || typeof tx !== "object") return tx;
+            const normalizedDate = normalizeDateValue(tx.date || tx.timestamp || "");
+            const normalizedTime = normalizeTimeValue(tx.time || tx.timestamp);
+            const normalizedTimestamp = tx.timestamp || (normalizedDate ? `${normalizedDate}T${normalizedTime || "00:00:00"}` : "");
+            return {
+                id: tx.id ?? Date.now(),
+                checked: Boolean(tx.checked),
+                date: normalizedDate,
+                time: normalizedTime,
+                timestamp: normalizedTimestamp,
+                update: tx.update || "Pengeluaran",
+                detail: String(tx.detail || "").trim(),
+                nominal: Number(tx.nominal) || 0,
+                account: (tx.account === "BNI" ? "Bank" : tx.account) || "Cash",
+                category: tx.category || "Lainnya"
+            };
+        }
+
+        function transactionFingerprint(tx) {
+            const t = normalizeTransaction(tx);
+            return [
+                String(t.id || ""),
+                normalizeDateValue(t.date || ""),
+                normalizeTimeValue(t.time || t.timestamp || ""),
+                String(t.update || ""),
+                String(t.detail || "").trim().toLowerCase(),
+                String(Number(t.nominal) || 0),
+                String(t.account || ""),
+                String(t.category || "")
+            ].join("|");
+        }
+
+        function dedupeTransactions(list) {
+            const seen = new Set();
+            const result = [];
+            (list || []).forEach(item => {
+                const tx = normalizeTransaction(item);
+                const key = tx.id ? `id:${tx.id}` : transactionFingerprint(tx);
+                const fp = `${key}::${transactionFingerprint(tx)}`;
+                if (!seen.has(fp)) {
+                    seen.add(fp);
+                    result.push(tx);
+                }
+            });
+            return result;
+        }
+
+        function persistTransactions() {
+            transactions = dedupeTransactions(transactions);
+            sortTransactionsNewestFirst();
+            localStorage.setItem("sage_transactions", JSON.stringify(transactions));
+        }
 
         // Initialize state, load permanent browser storage, and pull from sheets if available
         function init() {
@@ -854,33 +938,15 @@
                 }
 
                 let updated = false;
-                transactions.forEach(t => {
-                    if (t.account === "BNI") {
-                        t.account = "Bank";
+                transactions = transactions.map(t => {
+                    const normalized = normalizeTransaction(t);
+                    if (t.account === "BNI" || t.date !== normalized.date || t.time !== normalized.time) {
                         updated = true;
                     }
-                    if (!t.update) {
-                        t.update = "Pengeluaran";
-                        updated = true;
-                    }
-                    t.nominal = Number(t.nominal) || 0;
-                    t.detail = String(t.detail || "").trim();
-                    t.category = t.category || "Lainnya";
-                    if (!t.time) {
-                        t.time = normalizeTimeValue(t.timestamp) || "00:00:00";
-                        updated = true;
-                    } else {
-                        const cleanTime = normalizeTimeValue(t.time);
-                        if (cleanTime && cleanTime !== t.time) {
-                            t.time = cleanTime;
-                            updated = true;
-                        }
-                    }
-                    if (!t.timestamp) {
-                        t.timestamp = `${t.date || "1970-01-01"}T${t.time || "00:00:00"}`;
-                        updated = true;
-                    }
+                    return normalized;
                 });
+
+                transactions = dedupeTransactions(transactions);
 
                 if (updated) {
                     localStorage.setItem("sage_transactions", JSON.stringify(transactions));
@@ -932,20 +998,21 @@
             document.getElementById('new-date').valueAsDate = new Date();
             document.getElementById("new-update").value = "Pengeluaran";
             updateLiveClock();
+            updateBackupStatus();
             populateYearFilter();
             renderTable();
         }
 
-        // Complete Reset Option
-        // Complete Reset Option
+        // Reset all local data
         function clearAllData() {
             if (confirm("Apakah Anda yakin ingin menghapus semua data transaksi dan anggaran dari penyimpanan browser?")) {
                 transactions = [];
                 budgets = { "Cash": 0, "E-wallet": 0, "Bank": 0 };
-                localStorage.setItem("sage_transactions", JSON.stringify(transactions));
+                persistTransactions();
                 localStorage.setItem("sage_budgets", JSON.stringify(budgets));
                 localStorage.removeItem("sage_daily_budget");
                 document.getElementById("daily-budget-input").value = "";
+                updateBackupStatus();
                 populateYearFilter();
                 renderTable();
                 showToast("Penyimpanan lokal berhasil dikosongkan.");
@@ -988,7 +1055,7 @@
         function updateSyncBadge(state, message) {
             const statusEl = document.getElementById("sync-status");
             const mobileDot = document.getElementById("sync-status-mobile");
-            
+
             // Sync status on mobile
             if (mobileDot) {
                 if (state === "success") {
@@ -1003,7 +1070,7 @@
             }
 
             if (!statusEl) return;
-            
+
             if (state === "offline") {
                 statusEl.className = "hidden md:flex text-xs font-semibold px-2.5 py-1.5 rounded-full bg-orange-100 text-orange-700 border border-orange-200 items-center gap-1.5";
                 statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-orange-500"></span> ${message}`;
@@ -1031,30 +1098,10 @@
             }
         }
 
-
         function getTransactionEffect(updateType) {
             const type = updateType || "Pengeluaran";
             if (type === "Pemasukan" || type === "Tabungan") return 1;
             return -1;
-        }
-
-        function normalizeTransaction(tx) {
-            if (!tx || typeof tx !== "object") return tx;
-            const normalizedDate = tx.date || "";
-            const normalizedTime = normalizeTimeValue(tx.time || tx.timestamp);
-            const normalizedTimestamp = tx.timestamp || (normalizedDate ? `${normalizedDate}T${normalizedTime || "00:00:00"}` : "");
-            return {
-                id: tx.id ?? Date.now(),
-                checked: Boolean(tx.checked),
-                date: normalizedDate,
-                time: normalizedTime,
-                timestamp: normalizedTimestamp,
-                update: tx.update || "Pengeluaran",
-                detail: String(tx.detail || "").trim(),
-                nominal: Number(tx.nominal) || 0,
-                account: (tx.account === "BNI" ? "Bank" : tx.account) || "Cash",
-                category: tx.category || "Lainnya"
-            };
         }
 
         // PUSH DATA: Send to Google Spreadsheet (CORS Safe)
@@ -1122,7 +1169,7 @@
                         hasChanges = true;
                     }
                     if (data.transactions) {
-                        transactions = data.transactions.map(normalizeTransaction);
+                        transactions = dedupeTransactions(data.transactions.map(normalizeTransaction));
                         sortTransactionsNewestFirst();
                         localStorage.setItem("sage_transactions", JSON.stringify(transactions));
                         hasChanges = true;
@@ -1191,7 +1238,7 @@
                 const amount = Number(t.nominal) || 0;
                 if (
                     updateType === "Pengeluaran" &&
-                    t.date === todayStr &&
+                    normalizeDateValue(t.date) === todayStr &&
                     t.category !== "Kuliah" &&
                     t.category !== "Kos/Bulanan"
                 ) {
@@ -1258,10 +1305,12 @@
                 "Bank": 0
             };
 
-            const balanceMap = {
-                "Cash": Number(budgets["Cash"]) || 0,
-                "E-wallet": Number(budgets["E-wallet"]) || 0,
-                "Bank": Number(budgets["Bank"]) || 0
+            // Actual account balance is driven by transactions only.
+            // Budget allocation should NOT inflate remaining balance.
+            const actualBalanceMap = {
+                "Cash": 0,
+                "E-wallet": 0,
+                "Bank": 0
             };
 
             let filteredTransactions = [];
@@ -1269,7 +1318,7 @@
             let totalIncomeAll = 0;
             let totalSavingAll = 0;
 
-            const normalizedTransactions = (transactions || []).map(normalizeTransaction);
+            const normalizedTransactions = dedupeTransactions(transactions || []);
 
             const periodTransactions = normalizedTransactions.filter((tx) => {
                 const { month, year } = getTransactionDateParts(tx);
@@ -1284,16 +1333,16 @@
                 const updateType = t.update || "Pengeluaran";
                 const amount = Number(t.nominal) || 0;
 
-                if (balanceMap[safeAccount] !== undefined) {
+                if (actualBalanceMap[safeAccount] !== undefined) {
                     if (updateType === "Pengeluaran") {
                         expenseMap[safeAccount] += amount;
-                        balanceMap[safeAccount] -= amount;
+                        actualBalanceMap[safeAccount] -= amount;
                         totalSpentAll += amount;
                     } else if (updateType === "Pemasukan") {
-                        balanceMap[safeAccount] += amount;
+                        actualBalanceMap[safeAccount] += amount;
                         totalIncomeAll += amount;
                     } else if (updateType === "Tabungan") {
-                        balanceMap[safeAccount] += amount;
+                        actualBalanceMap[safeAccount] += amount;
                         totalSavingAll += amount;
                     }
                 }
@@ -1313,14 +1362,14 @@
 
             filteredTransactions = periodFiltered;
 
-            updateAccountCard("Cash", budgets["Cash"] || 0, expenseMap["Cash"] || 0, balanceMap["Cash"] || 0);
-            updateAccountCard("E-wallet", budgets["E-wallet"] || 0, expenseMap["E-wallet"] || 0, balanceMap["E-wallet"] || 0);
-            updateAccountCard("Bank", budgets["Bank"] || 0, expenseMap["Bank"] || 0, balanceMap["Bank"] || 0);
+            updateAccountCard("Cash", budgets["Cash"] || 0, expenseMap["Cash"] || 0, actualBalanceMap["Cash"] || 0);
+            updateAccountCard("E-wallet", budgets["E-wallet"] || 0, expenseMap["E-wallet"] || 0, actualBalanceMap["E-wallet"] || 0);
+            updateAccountCard("Bank", budgets["Bank"] || 0, expenseMap["Bank"] || 0, actualBalanceMap["Bank"] || 0);
 
             const totalPortfolio =
-                (balanceMap["Cash"] || 0) +
-                (balanceMap["E-wallet"] || 0) +
-                (balanceMap["Bank"] || 0);
+                (actualBalanceMap["Cash"] || 0) +
+                (actualBalanceMap["E-wallet"] || 0) +
+                (actualBalanceMap["Bank"] || 0);
 
             const totalNet = totalIncomeAll + totalSavingAll - totalSpentAll;
             const totalTransactionsCount = periodTransactions.length;
@@ -1398,6 +1447,7 @@
             calculateDailyBudgetStats();
         }
 
+
         // Card rendering optimization parameters helper
         function updateAccountCard(accId, target, spent, balance) {
             const keyPrefix = accId.toLowerCase().replace("-", "");
@@ -1415,6 +1465,7 @@
             if (targetEl) targetEl.innerHTML = formatRupiah(safeTarget);
             if (spentEl) spentEl.innerHTML = formatRupiah(safeSpent);
 
+            // Sisa now follows actual account balance and is NOT inflated by budget allocation.
             if (sisaEl) {
                 sisaEl.innerHTML = formatRupiah(safeBalance);
                 if (safeBalance < 0) {
@@ -1442,6 +1493,7 @@
                 }
             }
         }
+
 
         function getAccountLabelClass(acc) {
             if (acc === "Cash") return "bg-emerald-50 text-emerald-700 border border-emerald-100";
@@ -1635,7 +1687,7 @@
             const tx = transactions.find(t => t.id === id);
             if (tx) {
                 tx.checked = !tx.checked;
-                localStorage.setItem("sage_transactions", JSON.stringify(transactions));
+                persistTransactions();
                 populateYearFilter();
                 renderTable();
                 showToast(`Status transaksi "${tx.detail}" diubah.`);
@@ -1650,7 +1702,7 @@
                 const targetTx = transactions[index];
                 if (confirm(`Hapus transaksi "${targetTx.detail}"?`)) {
                     transactions.splice(index, 1);
-                    localStorage.setItem("sage_transactions", JSON.stringify(transactions));
+                    persistTransactions();
                     populateYearFilter();
                     renderTable();
                     showToast(`Transaksi berhasil dihapus.`);
@@ -1675,13 +1727,14 @@
 
             const { time } = getNowParts();
             const cleanTime = normalizeTimeValue(time) || time;
+            const cleanDate = normalizeDateValue(dateVal);
 
             const newTx = normalizeTransaction({
                 id: Date.now(),
                 checked: false,
-                date: dateVal,
+                date: cleanDate,
                 time: cleanTime,
-                timestamp: `${dateVal}T${cleanTime}`,
+                timestamp: `${cleanDate}T${cleanTime}`,
                 update: updateVal,
                 detail: detailVal,
                 nominal: nominalVal,
@@ -1690,8 +1743,7 @@
             });
 
             transactions.unshift(newTx); // Insert as first item (newest)
-            sortTransactionsNewestFirst();
-            localStorage.setItem("sage_transactions", JSON.stringify(transactions));
+            persistTransactions();
 
             // Clean interface fields
             document.getElementById("new-update").value = "Pengeluaran";
@@ -1709,11 +1761,11 @@
             if (dailyBudgetLimit > 0 && categoryVal !== "Kuliah" && categoryVal !== "Kos/Bulanan") {
                 const d = new Date();
                 const todayStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-                if (dateVal === todayStr) {
+                if (normalizeDateValue(dateVal) === todayStr) {
                     let dailySpent = 0;
                     transactions.forEach(t => {
                         if (t.update === "Pengeluaran" && 
-                            t.date === todayStr && 
+                            normalizeDateValue(t.date) === todayStr && 
                             t.category !== "Kuliah" && 
                             t.category !== "Kos/Bulanan") {
                             dailySpent += Number(t.nominal) || 0;
@@ -1993,17 +2045,22 @@
         }
 
         function formatDate(dateStr) {
-            if (!dateStr) return "";
+            const normalized = normalizeDateValue(dateStr);
+            if (!normalized) return "";
             const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
-            const parts = dateStr.split("-");
+            const parts = normalized.split("-");
             if (parts.length === 3) {
                 const year = parts[0];
-                const month = months[parseInt(parts[1]) - 1];
-                const day = parseInt(parts[2]);
-                return `${day} ${month} ${year}`;
+                const monthIndex = parseInt(parts[1], 10);
+                const month = months[monthIndex - 1];
+                const day = parseInt(parts[2], 10);
+                if (!isNaN(day) && month) return `${day} ${month} ${year}`;
+                return normalized;
             }
-            return dateStr;
+            return normalized;
         }
+
+        // Animated Sleek Toast Creator
 
         // Animated Sleek Toast Creator
         function showToast(message, type = "success") {
