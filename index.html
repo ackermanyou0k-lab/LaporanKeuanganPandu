@@ -669,10 +669,6 @@
             "Bank": 0
         };
         let isAutoSyncEnabled = false;
-        let cloudRevision = localStorage.getItem("sage_cloud_revision") || "";
-        let cloudPullInFlight = false;
-        let cloudPullTimer = null;
-        let cloudLastPullAt = 0;
 
         const MONTH_LABELS = {
             1: "Januari",
@@ -989,12 +985,8 @@
             if (savedApiUrl) {
                 document.getElementById("api-url").value = savedApiUrl;
                 updateSyncBadge("cloud", "Koneksi Tersedia");
-                const savedCloudRevision = localStorage.getItem("sage_cloud_revision");
-                cloudRevision = savedCloudRevision || cloudRevision || "";
                 if (!hasLocalTransactions) {
-                    pullFromSheets(true, true);
-                } else {
-                    scheduleCloudRefresh(2500, false);
+                    pullFromSheets(true);
                 }
             } else {
                 updateSyncBadge("offline", "Lokal (Belum Sinkron)");
@@ -1012,21 +1004,6 @@
             updateBackupStatus();
             populateYearFilter();
             renderTable();
-
-            // Keep cloud and local data in sync without requiring manual refresh.
-            window.addEventListener("focus", () => {
-                if (localStorage.getItem("sage_gas_url")) scheduleCloudRefresh(1200, false);
-            });
-            document.addEventListener("visibilitychange", () => {
-                if (!document.hidden && localStorage.getItem("sage_gas_url")) {
-                    scheduleCloudRefresh(1200, false);
-                }
-            });
-            setInterval(() => {
-                if (document.visibilityState === "visible" && localStorage.getItem("sage_gas_url")) {
-                    scheduleCloudRefresh(0, false);
-                }
-            }, 60000);
         }
 
         // Reset all local data
@@ -1119,74 +1096,9 @@
         function triggerAutoSync() {
             if (isAutoSyncEnabled) {
                 pushToSheets(true); // Silent mode
-                scheduleCloudRefresh(1200, true);
             } else {
                 updateSyncBadge("offline", "Lokal (Belum Sinkron)");
             }
-        }
-
-        function mergeTransactionsByFingerprint(localList, remoteList) {
-            const merged = [];
-            const seen = new Map();
-
-            [...(localList || []), ...(remoteList || [])].forEach((raw) => {
-                const tx = normalizeTransaction(raw);
-                const key = transactionFingerprint(tx);
-                const existing = seen.get(key);
-                if (!existing) {
-                    seen.set(key, tx);
-                    merged.push(tx);
-                    return;
-                }
-
-                const existingTime = getTimestampValue(existing);
-                const incomingTime = getTimestampValue(tx);
-                if (incomingTime >= existingTime) {
-                    seen.set(key, tx);
-                    const idx = merged.findIndex((item) => transactionFingerprint(item) === key);
-                    if (idx >= 0) merged[idx] = tx;
-                }
-            });
-
-            return dedupeTransactions(merged);
-        }
-
-        function applyCloudPayload(data, options = {}) {
-            const force = Boolean(options.force);
-            let changed = false;
-
-            if (data.revision && !force && data.revision === cloudRevision) {
-                return false;
-            }
-
-            if (data.budgets) {
-                const incomingBudgets = Object.assign({}, data.budgets);
-                if (incomingBudgets["BNI"] !== undefined) {
-                    incomingBudgets["Bank"] = incomingBudgets["BNI"];
-                    delete incomingBudgets["BNI"];
-                }
-                budgets = Object.assign({ "Cash": 0, "E-wallet": 0, "Bank": 0 }, budgets || {}, incomingBudgets);
-                localStorage.setItem("sage_budgets", JSON.stringify(budgets));
-                changed = true;
-            }
-
-            if (Array.isArray(data.transactions)) {
-                const incomingTransactions = dedupeTransactions((data.transactions || []).map(normalizeTransaction));
-                transactions = mergeTransactionsByFingerprint(transactions, incomingTransactions);
-                persistTransactions();
-                changed = true;
-            }
-
-            if (data.revision) {
-                cloudRevision = data.revision;
-                localStorage.setItem("sage_cloud_revision", cloudRevision);
-            }
-
-            if (data.updatedAt) {
-                localStorage.setItem("sage_cloud_updated_at", data.updatedAt);
-            }
-
-            return changed;
         }
 
         function getTransactionEffect(updateType) {
@@ -1207,13 +1119,13 @@
 
             const payload = {
                 budgets: budgets,
-                transactions: dedupeTransactions(transactions)
+                transactions: transactions
             };
 
             // Using text/plain to bypass CORS Preflight blocks in certain browsers
             fetch(apiUrl, {
                 method: "POST",
-                mode: "no-cors",
+                mode: "no-cors", 
                 headers: {
                     "Content-Type": "text/plain"
                 },
@@ -1222,7 +1134,6 @@
             .then(() => {
                 updateSyncBadge("success", "Sinkronisasi Berhasil");
                 if (!isSilent) showToast("Berhasil mengirim data ke Google Sheets Anda!");
-                scheduleCloudRefresh(1200, true);
             })
             .catch(err => {
                 console.error("Sync Error: ", err);
@@ -1232,15 +1143,12 @@
         }
 
         // PULL DATA: Fetch directly from Google Spreadsheet
-        function pullFromSheets(isSilent = false, force = false) {
+        function pullFromSheets(isSilent = false) {
             const apiUrl = localStorage.getItem("sage_gas_url");
             if (!apiUrl) {
                 if (!isSilent) showToast("Atur & simpan API URL terlebih dahulu!", "error");
                 return;
             }
-
-            if (cloudPullInFlight) return;
-            cloudPullInFlight = true;
 
             if (!isSilent) updateSyncBadge("syncing");
 
@@ -1251,16 +1159,31 @@
             })
             .then(data => {
                 if (data.status === "success") {
-                    const changed = applyCloudPayload(data, { force });
-
-                    if (changed) {
-                        populateYearFilter();
-                        renderTable();
+                    let hasChanges = false;
+                    
+                    if (data.budgets) {
+                        // Safe conversion again during fetch mapping
+                        const incomingBudgets = Object.assign({}, data.budgets);
+                        if (incomingBudgets["BNI"] !== undefined) {
+                            incomingBudgets["Bank"] = incomingBudgets["BNI"];
+                            delete incomingBudgets["BNI"];
+                        }
+                        budgets = Object.assign({ "Cash": 0, "E-wallet": 0, "Bank": 0 }, budgets || {}, incomingBudgets);
+                        localStorage.setItem("sage_budgets", JSON.stringify(budgets));
+                        hasChanges = true;
                     }
-
+                    if (data.transactions) {
+                        const incomingTransactions = dedupeTransactions((data.transactions || []).map(normalizeTransaction));
+                        transactions = dedupeTransactions([...(transactions || []), ...incomingTransactions]);
+                        sortTransactionsNewestFirst();
+                        localStorage.setItem("sage_transactions", JSON.stringify(transactions));
+                        hasChanges = true;
+                    }
+                    
+                    populateYearFilter();
+                    renderTable();
                     updateSyncBadge("success", "Data Ter-sinkron");
-                    if (!isSilent && changed) showToast("Data terbaru berhasil diunduh dari Google Sheets!");
-                    if (!isSilent && !changed) showToast("Data sudah terbaru.");
+                    if (!isSilent) showToast("Data terbaru berhasil diunduh dari Google Sheets!");
                 } else {
                     throw new Error(data.message || "Unknown error");
                 }
@@ -1271,14 +1194,10 @@
                     updateSyncBadge("error", "Gagal Memuat Data");
                     showToast("Gagal mengunduh data dari Cloud. Cek izin deployment web app Anda.", "error");
                 }
-            })
-            .finally(() => {
-                cloudPullInFlight = false;
-                cloudLastPullAt = Date.now();
             });
         }
 
-// Connection Test Function
+        // Connection Test Function
         function testConnection() {
             const apiUrl = document.getElementById("api-url").value.trim();
             if (apiUrl === "") {
