@@ -707,17 +707,27 @@
             return new Date(0);
         }
 
+        // Formats a Date object as "yyyy-MM-dd" using the browser's local time.
+        // (Replaces the old Utilities.formatDate/Session.getScriptTimeZone calls,
+        // which are Google Apps Script server-side APIs that don't exist in the browser.)
+        function toISODateLocal(d) {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, "0");
+            const day = String(d.getDate()).padStart(2, "0");
+            return `${y}-${m}-${day}`;
+        }
+
         function normalizeDateValue(value) {
             if (value === undefined || value === null || value === "") return "";
 
             if (value instanceof Date && !isNaN(value)) {
-                return Utilities.formatDate(value, Session.getScriptTimeZone(), "yyyy-MM-dd");
+                return toISODateLocal(value);
             }
 
             if (typeof value === "number") {
                 const parsed = new Date(value);
                 if (!isNaN(parsed)) {
-                    return Utilities.formatDate(parsed, Session.getScriptTimeZone(), "yyyy-MM-dd");
+                    return toISODateLocal(parsed);
                 }
             }
 
@@ -735,7 +745,7 @@
 
             const parsed = new Date(raw);
             if (!isNaN(parsed)) {
-                return Utilities.formatDate(parsed, Session.getScriptTimeZone(), "yyyy-MM-dd");
+                return toISODateLocal(parsed);
             }
 
             return raw;
@@ -1425,15 +1435,15 @@
                         </td>
                         <td class="py-4 px-3 text-sage-500 font-semibold text-[11px]">${formatDate(t.date)}</td>
                         <td class="py-4 px-3 text-center text-[11px] font-semibold text-sage-500">${rowTime}</td>
-                        <td class="py-4 px-3 font-medium break-words whitespace-normal max-w-[180px] sm:max-w-[260px] ${t.checked ? "line-through text-sage-400" : "text-sage-900"}">${t.detail}</td>
+                        <td class="py-4 px-3 font-medium break-words whitespace-normal max-w-[180px] sm:max-w-[260px] ${t.checked ? "line-through text-sage-400" : "text-sage-900"}">${escapeHtml(t.detail)}</td>
                         <td class="py-4 px-3 text-center">
-                            <span class="px-2.5 py-1 sm:py-0.5 rounded text-[10px] font-bold ${getAccountLabelClass(safeAccount)}">${safeAccount}</span>
+                            <span class="px-2.5 py-1 sm:py-0.5 rounded text-[10px] font-bold ${getAccountLabelClass(safeAccount)}">${escapeHtml(safeAccount)}</span>
                         </td>
                         <td class="py-4 px-3 text-center">
-                            <span class="${getUpdateBadgeClass(updateType)}">${updateType}</span>
+                            <span class="${getUpdateBadgeClass(updateType)}">${escapeHtml(updateType)}</span>
                         </td>
                         <td class="py-4 px-3 text-center">
-                            <span class="px-2.5 py-1 sm:py-0.5 rounded text-[10px] font-medium bg-sage-100 text-sage-700">${t.category}</span>
+                            <span class="px-2.5 py-1 sm:py-0.5 rounded text-[10px] font-medium bg-sage-100 text-sage-700">${escapeHtml(t.category)}</span>
                         </td>
                         <td class="py-4 px-3 text-right font-bold text-sage-900 ${t.checked ? "text-sage-400 line-through" : ""}">${formatRupiah(Number(t.nominal) || 0)}</td>
                         <td class="py-4 px-3 text-center">
@@ -2039,6 +2049,19 @@
             el.textContent = `Backup: ${d.toLocaleDateString("id-ID")}`;
         }
 
+
+        // Escapes user-entered text before inserting into innerHTML, so a
+        // description like "<b>Test</b>" or "Tom & Jerry" renders as plain
+        // text instead of breaking the row or being interpreted as markup.
+        function escapeHtml(str) {
+            return String(str ?? "").replace(/[&<>"']/g, (ch) => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            }[ch]));
+        }
 
         // Helpers for styling formats
         function formatRupiah(num) {
